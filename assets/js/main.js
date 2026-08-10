@@ -183,7 +183,11 @@ function initDevisCalculator() {
         const selectedOption = categorySelect.options[categorySelect.selectedIndex];
         
         let unitPrice = 30000;
-        if (selectedOption && selectedOption.hasAttribute('data-price')) {
+        const detailsInput = document.getElementById('page-calc-details');
+        
+        if (detailsInput && detailsInput.hasAttribute('data-exact-price') && detailsInput.value.trim() !== '') {
+            unitPrice = parseInt(detailsInput.getAttribute('data-exact-price'));
+        } else if (selectedOption && selectedOption.hasAttribute('data-price')) {
             unitPrice = parseInt(selectedOption.getAttribute('data-price'));
         }
 
@@ -205,7 +209,11 @@ function initDevisCalculator() {
     }
 
     qtyInput.addEventListener('input', calculate);
-    categorySelect.addEventListener('change', calculate);
+    categorySelect.addEventListener('change', () => {
+        const detailsInput = document.getElementById('page-calc-details');
+        if (detailsInput) detailsInput.removeAttribute('data-exact-price');
+        calculate();
+    });
     if (montageCheck) montageCheck.addEventListener('change', calculate);
     if (geometrieCheck) geometrieCheck.addEventListener('change', calculate);
     if (azoteCheck) azoteCheck.addEventListener('change', calculate);
@@ -333,7 +341,19 @@ function renderCatalogItems(items) {
             const detailsInput = document.getElementById('page-calc-details');
             if (detailsInput) {
                 detailsInput.value = `${tire.brand} ${tire.width}/${tire.ratio} ${tire.rim} (${tire.model})`;
+                detailsInput.setAttribute('data-exact-price', tire.price);
             }
+            
+            const catSelect = document.getElementById('calc-category');
+            if (catSelect) {
+                catSelect.value = tire.category;
+            }
+            
+            const qtyInput = document.getElementById('calc-qty');
+            if (qtyInput) {
+                qtyInput.dispatchEvent(new Event('input'));
+            }
+
             const devisSec = document.getElementById('devis');
             if (devisSec) {
                 devisSec.scrollIntoView({ behavior: 'smooth' });
