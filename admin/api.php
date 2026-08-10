@@ -27,6 +27,20 @@ try {
             $t['desc'] = $t['description'];
         }
         echo json_encode($tires);
+    } elseif ($type === 'extra_services') {
+        $stmt = $pdo->query("SELECT * FROM extra_services WHERE is_hidden = 0");
+        echo json_encode($stmt->fetchAll());
+    } elseif ($type === 'testimonials') {
+        $stmt = $pdo->query("SELECT * FROM testimonials WHERE is_hidden = 0");
+        echo json_encode($stmt->fetchAll());
+    } elseif ($type === 'settings') {
+        $stmt = $pdo->query("SELECT * FROM settings");
+        // Convert to key-value object
+        $settings = [];
+        foreach($stmt->fetchAll() as $row) {
+            $settings[$row['setting_key']] = $row['setting_value'];
+        }
+        echo json_encode($settings);
     } else {
         echo json_encode(['error' => 'Type non spécifié']);
     }

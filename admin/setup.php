@@ -42,6 +42,35 @@ try {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
     $pdo->exec($sql_tires);
 
+    // Table pour les services complémentaires (options devis)
+    $sql_extra_services = "CREATE TABLE IF NOT EXISTS extra_services (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        price INT NOT NULL,
+        price_type VARCHAR(50) DEFAULT 'per_tire', -- 'per_tire' ou 'flat'
+        is_checked TINYINT(1) DEFAULT 1,
+        is_hidden TINYINT(1) DEFAULT 0
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+    $pdo->exec($sql_extra_services);
+
+    // Table pour les témoignages
+    $sql_testimonials = "CREATE TABLE IF NOT EXISTS testimonials (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        author VARCHAR(100) NOT NULL,
+        role VARCHAR(100),
+        text TEXT NOT NULL,
+        stars INT DEFAULT 5,
+        is_hidden TINYINT(1) DEFAULT 0
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+    $pdo->exec($sql_testimonials);
+
+    // Table pour les réglages globaux
+    $sql_settings = "CREATE TABLE IF NOT EXISTS settings (
+        setting_key VARCHAR(50) PRIMARY KEY,
+        setting_value TEXT NOT NULL
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+    $pdo->exec($sql_settings);
+
     // Mises à jour des tables existantes (au cas où elles ont été créées avant cette mise à jour)
     try { $pdo->exec("ALTER TABLE services ADD COLUMN is_hidden TINYINT(1) DEFAULT 0;"); } catch(Exception $e) {}
     try { $pdo->exec("ALTER TABLE tires ADD COLUMN is_hidden TINYINT(1) DEFAULT 0;"); } catch(Exception $e) {}
@@ -80,6 +109,41 @@ try {
         $pdo->exec($init_tires);
     }
     
+    // Initialisation des services complémentaires
+    $stmt = $pdo->query("SELECT COUNT(*) FROM extra_services");
+    if ($stmt->fetchColumn() == 0) {
+        $init_extra = "INSERT INTO extra_services (title, price, price_type, is_checked) VALUES 
+        ('Montage & Équilibrage électronique', 2500, 'per_tire', 1),
+        ('Géométrie 3D & Parallélisme Laser', 15000, 'flat', 1),
+        ('Gonflage à l\'Azote', 1000, 'per_tire', 0)";
+        $pdo->exec($init_extra);
+    }
+
+    // Initialisation des témoignages
+    $stmt = $pdo->query("SELECT COUNT(*) FROM testimonials");
+    if ($stmt->fetchColumn() == 0) {
+        $init_testi = "INSERT INTO testimonials (author, role, text, stars) VALUES 
+        ('Kouassi Marc', 'Client de Marcory', 'Service impeccable à Treichville ! J\'ai changé les 4 pneus de mon SUV Hyundai Santa Fe. Le parallélisme 3D est d\'une précision chirurgicale, la voiture ne tire plus du tout.', 5),
+        ('Amadou Traoré', 'Conducteur VTC Abidjan', 'Pneus de très bonne qualité et prix très honnêtes par rapport au marché. Accueil chaleureux et travail très rapide. Je recommande vivement !', 5),
+        ('Sarah Bamba', 'Cliente de Cocody', 'Je suis venue pour un test de batterie et un parallélisme. Équipe professionnelle et de bon conseil. Ouvert le dimanche c\'est vraiment un gros plus !', 5)";
+        $pdo->exec($init_testi);
+    }
+
+    // Initialisation des paramètres globaux
+    $stmt = $pdo->query("SELECT COUNT(*) FROM settings");
+    if ($stmt->fetchColumn() == 0) {
+        $init_settings = "INSERT INTO settings (setting_key, setting_value) VALUES 
+        ('site_name', 'Adams Pneumatique Services'),
+        ('phone', '+225 07 09 10 55 92'),
+        ('whatsapp', '2250709105592'),
+        ('address', 'Treichville, Avenue 16, Rue 44, à côté de l\'École Régionale, Abidjan, Côte d\'Ivoire'),
+        ('map_url', 'https://maps.google.com/?q=Treichville+Avenue+16+Rue+44+Abidjan+Cote+d%27Ivoire'),
+        ('map_embed', 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15891.033621453965!2d-4.00412845!3d5.30018895!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNcKwMTgnMDAuNyJOIDTCsDAwJzE0LjkiVw!5e0!3m2!1sfr!2sci!4v1620000000000!5m2!1sfr!2sci'),
+        ('working_hours', 'Du Lundi au Dimanche : 07h30 – 19h00 (Non-stop)'),
+        ('facebook_url', 'https://www.facebook.com/pneumatiqueservices')";
+        $pdo->exec($init_settings);
+    }
+
     echo "<h1>Installation de la Base de Données Réussie !</h1>";
     echo "<p>Les tables 'services', 'tire_categories' et 'tires' ont été créées avec succès.</p>";
     echo "<a href='index.php'>Aller à l'administration</a>";

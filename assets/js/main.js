@@ -8,10 +8,13 @@ let TIRE_CATEGORIES = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const [tiresRes, servicesRes, categoriesRes] = await Promise.all([
+        const [tiresRes, servicesRes, categoriesRes, extraRes, testiRes, settingsRes] = await Promise.all([
             fetch('admin/api.php?type=tires'),
             fetch('admin/api.php?type=services'),
-            fetch('admin/api.php?type=categories')
+            fetch('admin/api.php?type=categories'),
+            fetch('admin/api.php?type=extra_services'),
+            fetch('admin/api.php?type=testimonials'),
+            fetch('admin/api.php?type=settings')
         ]);
         
         if (categoriesRes.ok) {
@@ -22,6 +25,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (servicesRes.ok) {
             const servicesData = await servicesRes.json();
             renderServices(servicesData);
+        }
+        if (extraRes.ok) {
+            const extraData = await extraRes.json();
+            window.EXTRA_SERVICES = extraData;
+            renderExtraServices(extraData);
+        }
+        if (testiRes.ok) {
+            const testiData = await testiRes.json();
+            renderTestimonials(testiData);
+        }
+        if (settingsRes.ok) {
+            const settingsData = await settingsRes.json();
+            applySettings(settingsData);
         }
     } catch (error) {
         console.error("Erreur lors du chargement des données:", error);
@@ -167,22 +183,17 @@ function initTireFinder() {
 /* -------------------------------------------------------------------------- */
 /* 2. Interactive Devis Calculator (Calcul en temps réel)                   */
 /* -------------------------------------------------------------------------- */
-function initDevisCalculator() {
+window.calculateDevis = function() {
     const qtyInput = document.getElementById('calc-qty');
     const categorySelect = document.getElementById('calc-category');
-    const montageCheck = document.getElementById('calc-montage');
-    const geometrieCheck = document.getElementById('calc-geometrie');
-    const azoteCheck = document.getElementById('calc-azote');
     const totalDisplay = document.getElementById('calc-total-display');
-
     if (!qtyInput || !totalDisplay) return;
 
-    function calculate() {
-        const qty = parseInt(qtyInput.value) || 1;
-        const category = categorySelect.value;
+    const qty = parseInt(qtyInput.value) || 1;
+    let unitPrice = 30000;
+    
+    if (categorySelect) {
         const selectedOption = categorySelect.options[categorySelect.selectedIndex];
-        
-        let unitPrice = 30000;
         const detailsInput = document.getElementById('page-calc-details');
         
         if (detailsInput && detailsInput.hasAttribute('data-exact-price') && detailsInput.value.trim() !== '') {
@@ -190,35 +201,50 @@ function initDevisCalculator() {
         } else if (selectedOption && selectedOption.hasAttribute('data-price')) {
             unitPrice = parseInt(selectedOption.getAttribute('data-price'));
         }
-
-        let total = qty * unitPrice;
-
-        if (montageCheck && montageCheck.checked) {
-            total += qty * 2500;
-        }
-
-        if (geometrieCheck && geometrieCheck.checked) {
-            total += 15000;
-        }
-
-        if (azoteCheck && azoteCheck.checked) {
-            total += qty * 1000;
-        }
-
-        totalDisplay.textContent = total.toLocaleString('fr-FR') + ' FCFA';
     }
 
-    qtyInput.addEventListener('input', calculate);
-    categorySelect.addEventListener('change', () => {
-        const detailsInput = document.getElementById('page-calc-details');
-        if (detailsInput) detailsInput.removeAttribute('data-exact-price');
-        calculate();
-    });
-    if (montageCheck) montageCheck.addEventListener('change', calculate);
-    if (geometrieCheck) geometrieCheck.addEventListener('change', calculate);
-    if (azoteCheck) azoteCheck.addEventListener('change', calculate);
+    let total = qty * unitPrice;
 
-    calculate();
+    // Ajouter le prix des options cochées
+    const checkboxes = document.querySelectorAll('.extra-service-check');
+    checkboxes.forEach(chk => {
+        if (chk.checked) {
+            const price = parseInt(chk.getAttribute('data-price')) || 0;
+            const pType = chk.getAttribute('data-type');
+            if (pType === 'per_tire') {
+                total += qty * price;
+            } else {
+                total += price;
+            }
+        }
+    });
+
+    totalDisplay.textContent = total.toLocaleString('fr-FR') + ' FCFA';
+};
+
+function initDevisCalculator() {
+    const qtyInput = document.getElementById('calc-qty');
+    const categorySelect = document.getElementById('calc-category');
+
+    if (qtyInput) qtyInput.addEventListener('input', window.calculateDevis);
+    if (categorySelect) {
+        categorySelect.addEventListener('change', () => {
+            const detailsInput = document.getElementById('page-calc-details');
+            if (detailsInput) detailsInput.removeAttribute('data-exact-price');
+            window.calculateDevis();
+        });
+    }
+    
+    const container = document.getElementById('extra-services-container');
+    if (container) {
+        container.addEventListener('change', (e) => {
+            if (e.target.classList.contains('extra-service-check')) {
+                window.calculateDevis();
+            }
+        });
+    }
+
+    window.calculateDevis();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -493,4 +519,136 @@ function initSmoothScroll() {
             }
         });
     });
+}
+
+/* -------------------------------------------------------------------------- */
+/* 7. Dynamic Data Renderers                                                  */
+/* -------------------------------------------------------------------------- */
+function renderExtraServices(services) {
+    const container = document.getElementById('extra-services-container');
+    if (!container) return;
+    
+    container.replaceChildren();
+    
+    services.forEach(s => {
+        if (s.is_hidden == 1) return;
+        
+        const label = document.createElement('label');
+        label.style.fontWeight = '400';
+        label.style.fontSize = '0.95rem';
+        label.style.cursor = 'pointer';
+        
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'extra-service-check';
+        checkbox.setAttribute('data-price', s.price);
+        checkbox.setAttribute('data-type', s.price_type);
+        if (s.is_checked == 1) checkbox.checked = true;
+        
+        const priceLabel = s.price_type === 'per_tire' ? `${s.price} FCFA / pneu` : `${s.price} FCFA Forfait`;
+        
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(` ${s.title} (+${priceLabel})`));
+        
+        container.appendChild(label);
+    });
+    
+    if (window.calculateDevis) window.calculateDevis();
+}
+
+function renderTestimonials(testimonials) {
+    const container = document.getElementById('testimonials-container');
+    if (!container) return;
+    
+    container.replaceChildren();
+    
+    testimonials.forEach(t => {
+        if (t.is_hidden == 1) return;
+        
+        const card = document.createElement('div');
+        card.className = 'review-card';
+        
+        let starsHtml = '';
+        const sCount = parseInt(t.stars) || 5;
+        for (let i = 0; i < sCount; i++) {
+            starsHtml += '<i class="fa-solid fa-star"></i>';
+        }
+        
+        const firstLetter = t.author ? t.author.charAt(0).toUpperCase() : '?';
+        
+        card.innerHTML = `
+            <div class="stars">${starsHtml}</div>
+            <p class="review-text">"${t.text}"</p>
+            <div class="reviewer">
+                <div class="reviewer-avatar">${firstLetter}</div>
+                <div>
+                    <div style="font-weight: 700;">${t.author}</div>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">${t.role}</div>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function applySettings(settingsData) {
+    const settings = {};
+    settingsData.forEach(s => {
+        settings[s.setting_key] = s.setting_value;
+    });
+    
+    if (settings.address) {
+        const addressText = document.getElementById('setting-address-text');
+        if (addressText) addressText.textContent = settings.address;
+        
+        const footerAddress = document.getElementById('setting-footer-address');
+        if (footerAddress) footerAddress.textContent = settings.address;
+    }
+    
+    if (settings.phone) {
+        const phoneText = document.getElementById('setting-phone-text');
+        if (phoneText) phoneText.textContent = settings.phone;
+        
+        const footerPhoneText = document.getElementById('setting-footer-phone-text');
+        if (footerPhoneText) footerPhoneText.textContent = settings.phone;
+    }
+    
+    if (settings.whatsapp) {
+        const phoneLink = document.getElementById('setting-phone-link');
+        if (phoneLink) phoneLink.href = 'tel:+' + settings.whatsapp.replace(/\s/g, '');
+        
+        const footerPhoneLink = document.getElementById('setting-footer-phone-link');
+        if (footerPhoneLink) footerPhoneLink.href = 'tel:+' + settings.whatsapp.replace(/\s/g, '');
+        
+        const waBtn = document.getElementById('floating-wa-btn');
+        if (waBtn) waBtn.href = 'https://wa.me/' + settings.whatsapp.replace(/\s/g, '');
+    }
+    
+    if (settings.working_hours) {
+        const hoursDiv = document.getElementById('setting-working-hours');
+        if (hoursDiv) hoursDiv.textContent = settings.working_hours;
+    }
+    
+    if (settings.map_url) {
+        const embed = document.getElementById('setting-map-embed');
+        if (embed) embed.src = settings.map_url;
+        
+        const addressLink = document.getElementById('setting-address-link');
+        if (addressLink) addressLink.href = settings.map_url;
+        
+        const footerMapLink = document.getElementById('setting-footer-map-link');
+        if (footerMapLink) footerMapLink.href = settings.map_url;
+    }
+    
+    if (settings.facebook_url) {
+        const fbBtn = document.getElementById('setting-footer-facebook');
+        if (fbBtn) {
+            if (settings.facebook_url.trim() === '') {
+                fbBtn.style.display = 'none';
+            } else {
+                fbBtn.href = settings.facebook_url;
+                fbBtn.style.display = 'inline-block';
+            }
+        }
+    }
 }

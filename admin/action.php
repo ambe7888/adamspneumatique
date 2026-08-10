@@ -241,6 +241,82 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header("Location: index.php");
         exit;
     }
+
+    // -- EXTRA SERVICES (OPTIONS DE DEVIS) --
+    if ($action === 'add_extra_service') {
+        $title = $_POST['title'];
+        $price = (int)$_POST['price'];
+        $price_type = $_POST['price_type'];
+        $is_checked = isset($_POST['is_checked']) ? 1 : 0;
+        
+        $stmt = $pdo->prepare("INSERT INTO extra_services (title, price, price_type, is_checked) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$title, $price, $price_type, $is_checked]);
+        header("Location: index.php");
+        exit;
+    }
+    
+    if ($action === 'delete_extra_service') {
+        $id = (int)$_POST['id'];
+        $stmt = $pdo->prepare("DELETE FROM extra_services WHERE id = ?");
+        $stmt->execute([$id]);
+        header("Location: index.php");
+        exit;
+    }
+
+    if ($action === 'toggle_hide_extra_service') {
+        $id = (int)$_POST['id'];
+        $state = (int)$_POST['state'];
+        $stmt = $pdo->prepare("UPDATE extra_services SET is_hidden = ? WHERE id = ?");
+        $stmt->execute([$state, $id]);
+        header("Location: index.php");
+        exit;
+    }
+
+    // -- TESTIMONIALS --
+    if ($action === 'add_testimonial') {
+        $author = $_POST['author'];
+        $role = $_POST['role'];
+        $text = $_POST['text'];
+        $stars = (int)$_POST['stars'];
+        
+        $stmt = $pdo->prepare("INSERT INTO testimonials (author, role, text, stars) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$author, $role, $text, $stars]);
+        header("Location: index.php");
+        exit;
+    }
+
+    if ($action === 'delete_testimonial') {
+        $id = (int)$_POST['id'];
+        $stmt = $pdo->prepare("DELETE FROM testimonials WHERE id = ?");
+        $stmt->execute([$id]);
+        header("Location: index.php");
+        exit;
+    }
+
+    if ($action === 'toggle_hide_testimonial') {
+        $id = (int)$_POST['id'];
+        $state = (int)$_POST['state'];
+        $stmt = $pdo->prepare("UPDATE testimonials SET is_hidden = ? WHERE id = ?");
+        $stmt->execute([$state, $id]);
+        header("Location: index.php");
+        exit;
+    }
+
+    // -- SETTINGS --
+    if ($action === 'update_settings') {
+        // Liste des clés autorisées
+        $allowed_keys = ['site_name', 'phone', 'whatsapp', 'address', 'map_url', 'facebook_url', 'working_hours'];
+        
+        foreach ($allowed_keys as $key) {
+            if (isset($_POST[$key])) {
+                $value = $_POST[$key];
+                $stmt = $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES (?, ?) ON DUPLICATE KEY UPDATE setting_value = ?");
+                $stmt->execute([$key, $value, $value]);
+            }
+        }
+        header("Location: index.php");
+        exit;
+    }
 }
 header("Location: index.php");
 ?>

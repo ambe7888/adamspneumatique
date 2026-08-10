@@ -52,6 +52,14 @@ if (!isset($_SESSION['admin_logged_in'])) {
 $services = $pdo->query("SELECT * FROM services")->fetchAll();
 $tires = $pdo->query("SELECT * FROM tires")->fetchAll();
 $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
+$extra_services = $pdo->query("SELECT * FROM extra_services")->fetchAll();
+$testimonials = $pdo->query("SELECT * FROM testimonials")->fetchAll();
+
+$settings_raw = $pdo->query("SELECT * FROM settings")->fetchAll();
+$settings = [];
+foreach($settings_raw as $s) {
+    $settings[$s['setting_key']] = $s['setting_value'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -211,6 +219,206 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
             <?php endforeach; ?>
         </table>
         </div>
+        <!-- Options de Devis (Services Complémentaires) -->
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 40px 0;">
+        <div class="section-header">
+            <h2><i class="fa-solid fa-list-check" style="color: var(--secondary)"></i> Options de Devis</h2>
+            <button class="btn" onclick="document.getElementById('modalExtraService').style.display='block'"><i class="fa-solid fa-plus"></i> Nouvelle Option</button>
+        </div>
+        <div class="table-responsive">
+        <table>
+            <tr>
+                <th>Statut</th>
+                <th>Titre</th>
+                <th>Prix</th>
+                <th>Type de prix</th>
+                <th>Coché par défaut</th>
+                <th>Actions</th>
+            </tr>
+            <?php foreach($extra_services as $es): 
+                $isHidden = isset($es['is_hidden']) && $es['is_hidden'] == 1;
+            ?>
+            <tr class="<?= $isHidden ? 'row-hidden' : '' ?>">
+                <td>
+                    <form action="action.php" method="post" style="display:inline;">
+                        <input type="hidden" name="action" value="toggle_hide_extra_service">
+                        <input type="hidden" name="id" value="<?= $es['id'] ?>">
+                        <input type="hidden" name="state" value="<?= $isHidden ? 0 : 1 ?>">
+                        <button type="submit" class="btn btn-sm <?= $isHidden ? 'btn-info' : 'btn-secondary' ?>">
+                            <?= $isHidden ? 'Afficher' : 'Masquer' ?>
+                        </button>
+                    </form>
+                </td>
+                <td><?= htmlspecialchars($es['title']) ?></td>
+                <td><?= htmlspecialchars($es['price']) ?> FCFA</td>
+                <td><?= $es['price_type'] == 'per_tire' ? 'Par pneu' : 'Forfait fixe' ?></td>
+                <td><?= $es['is_checked'] ? 'Oui' : 'Non' ?></td>
+                <td class="action-group">
+                    <form action="action.php" method="post" style="display:inline;">
+                        <input type="hidden" name="action" value="delete_extra_service">
+                        <input type="hidden" name="id" value="<?= $es['id'] ?>">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cette option ?')">Suppr.</button>
+                    </form>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </table>
+        </div>
+
+        <!-- Témoignages -->
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 40px 0;">
+        <div class="section-header">
+            <h2><i class="fa-solid fa-comments" style="color: var(--secondary)"></i> Avis Clients</h2>
+            <button class="btn" onclick="document.getElementById('modalTestimonial').style.display='block'"><i class="fa-solid fa-plus"></i> Nouvel Avis</button>
+        </div>
+        <div class="table-responsive">
+        <table>
+            <tr>
+                <th>Statut</th>
+                <th>Auteur</th>
+                <th>Rôle/Lieu</th>
+                <th>Note</th>
+                <th>Texte</th>
+                <th>Actions</th>
+            </tr>
+            <?php foreach($testimonials as $testi): 
+                $isHidden = isset($testi['is_hidden']) && $testi['is_hidden'] == 1;
+            ?>
+            <tr class="<?= $isHidden ? 'row-hidden' : '' ?>">
+                <td>
+                    <form action="action.php" method="post" style="display:inline;">
+                        <input type="hidden" name="action" value="toggle_hide_testimonial">
+                        <input type="hidden" name="id" value="<?= $testi['id'] ?>">
+                        <input type="hidden" name="state" value="<?= $isHidden ? 0 : 1 ?>">
+                        <button type="submit" class="btn btn-sm <?= $isHidden ? 'btn-info' : 'btn-secondary' ?>">
+                            <?= $isHidden ? 'Afficher' : 'Masquer' ?>
+                        </button>
+                    </form>
+                </td>
+                <td><?= htmlspecialchars($testi['author']) ?></td>
+                <td><?= htmlspecialchars($testi['role']) ?></td>
+                <td><?= htmlspecialchars($testi['stars']) ?>/5</td>
+                <td><small><?= htmlspecialchars($testi['text']) ?></small></td>
+                <td class="action-group">
+                    <form action="action.php" method="post" style="display:inline;">
+                        <input type="hidden" name="action" value="delete_testimonial">
+                        <input type="hidden" name="id" value="<?= $testi['id'] ?>">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cet avis ?')">Suppr.</button>
+                    </form>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </table>
+        </div>
+
+        <!-- Paramètres Globaux -->
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 40px 0;">
+        <div class="section-header">
+            <h2><i class="fa-solid fa-cogs" style="color: var(--secondary)"></i> Informations du Site & Contacts</h2>
+        </div>
+        <div style="background: var(--bg-card); padding: 25px; border-radius: var(--radius); box-shadow: var(--shadow);">
+            <form action="action.php" method="post">
+                <input type="hidden" name="action" value="update_settings">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
+                    <div class="form-group">
+                        <label>Nom du site</label>
+                        <input type="text" name="site_name" class="form-control" value="<?= htmlspecialchars($settings['site_name'] ?? '') ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Téléphone affiché</label>
+                        <input type="text" name="phone" class="form-control" value="<?= htmlspecialchars($settings['phone'] ?? '') ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Numéro WhatsApp (sans + ni espaces)</label>
+                        <input type="text" name="whatsapp" class="form-control" value="<?= htmlspecialchars($settings['whatsapp'] ?? '') ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Horaires d'ouverture</label>
+                        <input type="text" name="working_hours" class="form-control" value="<?= htmlspecialchars($settings['working_hours'] ?? '') ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Adresse Physique</label>
+                        <input type="text" name="address" class="form-control" value="<?= htmlspecialchars($settings['address'] ?? '') ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Lien Facebook</label>
+                        <input type="text" name="facebook_url" class="form-control" value="<?= htmlspecialchars($settings['facebook_url'] ?? '') ?>">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Lien vers Google Maps (URL)</label>
+                        <input type="text" name="map_url" class="form-control" value="<?= htmlspecialchars($settings['map_url'] ?? '') ?>" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn"><i class="fa-solid fa-save"></i> Enregistrer les informations</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modale Ajout Option Devis -->
+    <div id="modalExtraService" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="document.getElementById('modalExtraService').style.display='none'">&times;</span>
+        <h2>Ajouter une option de devis</h2>
+        <form action="action.php" method="post">
+            <input type="hidden" name="action" value="add_extra_service">
+            <div class="form-group">
+                <label>Titre de l'option (ex: Montage & Equilibrage)</label>
+                <input type="text" name="title" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Prix (FCFA)</label>
+                <input type="number" name="price" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Type de calcul</label>
+                <select name="price_type" class="form-control">
+                    <option value="per_tire">Par pneu (Prix × Quantité)</option>
+                    <option value="flat">Forfait fixe (Prix ajouté une seule fois)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="is_checked" value="1" checked>
+                    Coché par défaut dans le devis
+                </label>
+            </div>
+            <button type="submit" class="btn">Enregistrer</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modale Ajout Témoignage -->
+    <div id="modalTestimonial" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="document.getElementById('modalTestimonial').style.display='none'">&times;</span>
+        <h2>Ajouter un avis client</h2>
+        <form action="action.php" method="post">
+            <input type="hidden" name="action" value="add_testimonial">
+            <div class="form-group">
+                <label>Nom du client</label>
+                <input type="text" name="author" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Rôle ou Lieu (ex: Client de Marcory)</label>
+                <input type="text" name="role" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Texte de l'avis</label>
+                <textarea name="text" class="form-control" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>Note (Etoiles)</label>
+                <select name="stars" class="form-control">
+                    <option value="5">5 Étoiles</option>
+                    <option value="4">4 Étoiles</option>
+                    <option value="3">3 Étoiles</option>
+                    <option value="2">2 Étoiles</option>
+                    <option value="1">1 Étoile</option>
+                </select>
+            </div>
+            <button type="submit" class="btn">Enregistrer</button>
+        </form>
+      </div>
     </div>
 
     <!-- Modale Ajout Service -->
