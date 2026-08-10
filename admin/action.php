@@ -9,18 +9,41 @@ if (!isset($_SESSION['admin_logged_in'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
+    // -- CATEGORIES --
+    if ($action === 'add_category') {
+        $slug = preg_replace('/[^a-z0-9\-]/', '', strtolower($_POST['slug'])); // Sécurisation du slug
+        $name = $_POST['name'];
+        $icon = $_POST['icon'];
+        $base_price = (int)$_POST['base_price'];
+
+        $stmt = $pdo->prepare("INSERT INTO tire_categories (slug, name, icon, base_price) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$slug, $name, $icon, $base_price]);
+        
+        header("Location: index.php");
+        exit;
+    }
+
+    if ($action === 'delete_category') {
+        $id = (int)$_POST['id'];
+        $stmt = $pdo->prepare("DELETE FROM tire_categories WHERE id = ?");
+        $stmt->execute([$id]);
+        
+        header("Location: index.php");
+        exit;
+    }
+
+    // -- SERVICES --
     if ($action === 'add_service') {
         $title = $_POST['title'];
         $description = $_POST['description'];
         $icon = $_POST['icon'];
-        $link = $_POST['link'];
-        $linkText = $_POST['linkText'];
+        $link = '#devis';
+        $linkText = 'Demander un devis';
         
         $imagePath = '';
         if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
             $tmp_name = $_FILES['image']['tmp_name'];
             $name = basename($_FILES['image']['name']);
-            // Sécurité de base
             $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
             if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
                 $uniqueName = time() . '_' . $name;
@@ -38,10 +61,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if ($action === 'edit_service') {
+        $id = (int)$_POST['id'];
+        $title = $_POST['title'];
+        $description = $_POST['description'];
+        $icon = $_POST['icon'];
+
+        $imagePath = $_POST['existing_image'] ?? '';
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $tmp_name = $_FILES['image']['tmp_name'];
+            $name = basename($_FILES['image']['name']);
+            $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                $uniqueName = time() . '_' . $name;
+                $dest = '../assets/images/' . $uniqueName;
+                if (move_uploaded_file($tmp_name, $dest)) {
+                    // Supprimer l'ancienne image si nouvelle fournie
+                    if ($imagePath && file_exists('../' . $imagePath)) unlink('../' . $imagePath);
+                    $imagePath = 'assets/images/' . $uniqueName;
+                }
+            }
+        }
+
+        $stmt = $pdo->prepare("UPDATE services SET title = ?, description = ?, icon = ?, image = ? WHERE id = ?");
+        $stmt->execute([$title, $description, $icon, $imagePath, $id]);
+        
+        header("Location: index.php");
+        exit;
+    }
+
     if ($action === 'delete_service') {
         $id = $_POST['id'];
         
-        // Supprimer l'image associée si elle existe
         $stmt = $pdo->prepare("SELECT image FROM services WHERE id = ?");
         $stmt->execute([$id]);
         $res = $stmt->fetch();
@@ -57,6 +108,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    if ($action === 'duplicate_service') {
+        $id = (int)$_POST['id'];
+        $stmt = $pdo->prepare("SELECT * FROM services WHERE id = ?");
+        $stmt->execute([$id]);
+        $service = $stmt->fetch();
+
+        if ($service) {
+            $newTitle = $service['title'] . ' (Copie)';
+            $stmtInsert = $pdo->prepare("INSERT INTO services (title, description, icon, image, link, linkText, is_hidden) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmtInsert->execute([$newTitle, $service['description'], $service['icon'], $service['image'], $service['link'], $service['linkText'], $service['is_hidden'] ?? 0]);
+        }
+        header("Location: index.php");
+        exit;
+    }
+
+    if ($action === 'toggle_hide_service') {
+        $id = (int)$_POST['id'];
+        $state = (int)$_POST['state']; // 1 for hide, 0 for show
+        $stmt = $pdo->prepare("UPDATE services SET is_hidden = ? WHERE id = ?");
+        $stmt->execute([$state, $id]);
+        header("Location: index.php");
+        exit;
+    }
+
+    // -- TIRES --
     if ($action === 'add_tire') {
         $brand = $_POST['brand'];
         $model = $_POST['model'];
@@ -65,11 +141,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $rim = $_POST['rim'];
         $category = $_POST['category'];
         $condition_type = $_POST['condition_type'];
-        $price = $_POST['price'];
+        $price = (int)$_POST['price'];
         $description = $_POST['description'];
 
         $stmt = $pdo->prepare("INSERT INTO tires (brand, model, width, ratio, rim, category, condition_type, price, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $stmt->execute([$brand, $model, $width, $ratio, $rim, $category, $condition_type, $price, $description]);
+        
+        header("Location: index.php");
+        exit;
+    }
+
+    if ($action === 'edit_tire') {
+        $id = (int)$_POST['id'];
+        $brand = $_POST['brand'];
+        $model = $_POST['model'];
+        $width = $_POST['width'];
+        $ratio = $_POST['ratio'];
+        $rim = $_POST['rim'];
+        $category = $_POST['category'];
+        $condition_type = $_POST['condition_type'];
+        $price = (int)$_POST['price'];
+        $description = $_POST['description'];
+
+        $stmt = $pdo->prepare("UPDATE tires SET brand=?, model=?, width=?, ratio=?, rim=?, category=?, condition_type=?, price=?, description=? WHERE id=?");
+        $stmt->execute([$brand, $model, $width, $ratio, $rim, $category, $condition_type, $price, $description, $id]);
         
         header("Location: index.php");
         exit;
@@ -80,6 +175,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("DELETE FROM tires WHERE id = ?");
         $stmt->execute([$id]);
         
+        header("Location: index.php");
+        exit;
+    }
+
+    if ($action === 'duplicate_tire') {
+        $id = (int)$_POST['id'];
+        $stmt = $pdo->prepare("SELECT * FROM tires WHERE id = ?");
+        $stmt->execute([$id]);
+        $tire = $stmt->fetch();
+
+        if ($tire) {
+            $newModel = $tire['model'] . ' (Copie)';
+            $stmtInsert = $pdo->prepare("INSERT INTO tires (brand, model, width, ratio, rim, category, condition_type, price, description, is_hidden) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmtInsert->execute([$tire['brand'], $newModel, $tire['width'], $tire['ratio'], $tire['rim'], $tire['category'], $tire['condition_type'], $tire['price'], $tire['description'], $tire['is_hidden'] ?? 0]);
+        }
+        header("Location: index.php");
+        exit;
+    }
+
+    if ($action === 'toggle_hide_tire') {
+        $id = (int)$_POST['id'];
+        $state = (int)$_POST['state'];
+        $stmt = $pdo->prepare("UPDATE tires SET is_hidden = ? WHERE id = ?");
+        $stmt->execute([$state, $id]);
         header("Location: index.php");
         exit;
     }

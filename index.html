@@ -227,12 +227,8 @@
             </div>
 
             <!-- Filter Tabs -->
-            <div class="catalog-tabs">
-                <button class="tab-btn active" data-category="all"><i class="fa-solid fa-border-all"></i> Tous les Pneus</button>
-                <button class="tab-btn" data-category="tourisme"><i class="fa-solid fa-car"></i> Citadines & Berlines</button>
-                <button class="tab-btn" data-category="suv"><i class="fa-solid fa-truck-monster"></i> SUV & 4x4</button>
-                <button class="tab-btn" data-category="utilitaire"><i class="fa-solid fa-van-shuttle"></i> Utilitaires</button>
-                <button class="tab-btn" data-category="occ"><i class="fa-solid fa-arrows-rotate"></i> Occasions Contrôlées</button>
+            <div class="catalog-tabs" id="catalog-tabs-container">
+                <!-- Les boutons de filtres seront injectés ici par JS -->
             </div>
 
             <!-- Dynamic Grid Target -->
@@ -272,10 +268,7 @@
                     <div class="form-group">
                         <label>1. Catégorie de Véhicule</label>
                         <select class="form-control" id="calc-category">
-                            <option value="tourisme">Berline / Citadine (env. 30 000 FCFA/pneu)</option>
-                            <option value="suv">SUV / 4x4 / Pick-up (env. 55 000 FCFA/pneu)</option>
-                            <option value="utilitaire">Camionnette / Utilitaire (env. 45 000 FCFA/pneu)</option>
-                            <option value="poids-lourd">Poids Lourd (env. 120 000 FCFA/pneu)</option>
+                            <!-- Les catégories seront injectées ici par JS -->
                         </select>
                     </div>
 

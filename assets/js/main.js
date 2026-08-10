@@ -4,14 +4,20 @@
  */
 
 let TIRE_DATABASE = [];
+let TIRE_CATEGORIES = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const [tiresRes, servicesRes] = await Promise.all([
+        const [tiresRes, servicesRes, categoriesRes] = await Promise.all([
             fetch('admin/api.php?type=tires'),
-            fetch('admin/api.php?type=services')
+            fetch('admin/api.php?type=services'),
+            fetch('admin/api.php?type=categories')
         ]);
         
+        if (categoriesRes.ok) {
+            TIRE_CATEGORIES = await categoriesRes.json();
+            renderDynamicCategories();
+        }
         if (tiresRes.ok) TIRE_DATABASE = await tiresRes.json();
         if (servicesRes.ok) {
             const servicesData = await servicesRes.json();
@@ -28,6 +34,40 @@ document.addEventListener('DOMContentLoaded', async () => {
     initSmoothScroll();
     initPageDevisSubmission();
 });
+
+function renderDynamicCategories() {
+    const tabsContainer = document.getElementById('catalog-tabs-container');
+    const selectCalc = document.getElementById('calc-category');
+
+    if (tabsContainer) {
+        tabsContainer.replaceChildren();
+        
+        const btnAll = document.createElement('button');
+        btnAll.className = 'tab-btn active';
+        btnAll.setAttribute('data-category', 'all');
+        btnAll.innerHTML = '<i class="fa-solid fa-border-all"></i> Tous les Pneus';
+        tabsContainer.appendChild(btnAll);
+
+        TIRE_CATEGORIES.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = 'tab-btn';
+            btn.setAttribute('data-category', cat.slug);
+            btn.innerHTML = `<i class="fa-solid ${cat.icon}"></i> ${cat.name}`;
+            tabsContainer.appendChild(btn);
+        });
+    }
+
+    if (selectCalc) {
+        selectCalc.replaceChildren();
+        TIRE_CATEGORIES.forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat.slug;
+            opt.setAttribute('data-price', cat.base_price);
+            opt.textContent = `${cat.name} (env. ${parseInt(cat.base_price).toLocaleString('fr-FR')} FCFA/pneu)`;
+            selectCalc.appendChild(opt);
+        });
+    }
+}
 
 function renderServices(services) {
     const container = document.getElementById('services-grid-container');
@@ -68,6 +108,18 @@ function renderServices(services) {
         const linkIcon = document.createElement('i');
         linkIcon.className = 'fa-solid fa-arrow-right';
         link.appendChild(linkIcon);
+        
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const detailsInput = document.getElementById('page-calc-details');
+            if (detailsInput) {
+                detailsInput.value = `Service : ${service.title}`;
+            }
+            const devisSec = document.getElementById('devis');
+            if (devisSec) {
+                devisSec.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
         
         bodyDiv.appendChild(iconDiv);
         bodyDiv.appendChild(title);
@@ -128,11 +180,12 @@ function initDevisCalculator() {
     function calculate() {
         const qty = parseInt(qtyInput.value) || 1;
         const category = categorySelect.value;
+        const selectedOption = categorySelect.options[categorySelect.selectedIndex];
         
         let unitPrice = 30000;
-        if (category === 'suv') unitPrice = 55000;
-        if (category === 'utilitaire') unitPrice = 45000;
-        if (category === 'poids-lourd') unitPrice = 120000;
+        if (selectedOption && selectedOption.hasAttribute('data-price')) {
+            unitPrice = parseInt(selectedOption.getAttribute('data-price'));
+        }
 
         let total = qty * unitPrice;
 
