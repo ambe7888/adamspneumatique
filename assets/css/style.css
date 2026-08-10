@@ -215,6 +215,22 @@ img {
     gap: 12px;
 }
 
+.location-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 10px;
+    border-left: 1px solid var(--border-color);
+}
+.location-item:first-child {
+    border-left: none;
+    padding-left: 0;
+}
+.location-name {
+    color: var(--primary-gold);
+    font-weight: 600;
+}
+
 .mobile-top-bar {
     display: none !important;
 }

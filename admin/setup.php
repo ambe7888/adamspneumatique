@@ -71,6 +71,17 @@ try {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
     $pdo->exec($sql_settings);
 
+    // Table pour les agences (locations) multiples
+    $sql_locations = "CREATE TABLE IF NOT EXISTS locations (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        address VARCHAR(255) NOT NULL,
+        phone VARCHAR(50),
+        hours VARCHAR(100),
+        map_url TEXT
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+    $pdo->exec($sql_locations);
+
     // Mises à jour des tables existantes (au cas où elles ont été créées avant cette mise à jour)
     try { $pdo->exec("ALTER TABLE services ADD COLUMN is_hidden TINYINT(1) DEFAULT 0;"); } catch(Exception $e) {}
     try { $pdo->exec("ALTER TABLE tires ADD COLUMN is_hidden TINYINT(1) DEFAULT 0;"); } catch(Exception $e) {}

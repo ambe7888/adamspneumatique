@@ -272,6 +272,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // -- LOCATIONS (AGENCES) --
+    if ($action === 'add_location') {
+        // Limiter à 3 agences
+        $stmt_count = $pdo->query("SELECT COUNT(*) FROM locations");
+        if ($stmt_count->fetchColumn() < 3) {
+            $name = $_POST['name'];
+            $address = $_POST['address'];
+            $phone = $_POST['phone'];
+            $hours = $_POST['hours'];
+            $map_url = $_POST['map_url'];
+            
+            $stmt = $pdo->prepare("INSERT INTO locations (name, address, phone, hours, map_url) VALUES (?, ?, ?, ?, ?)");
+            $stmt->execute([$name, $address, $phone, $hours, $map_url]);
+        }
+        header("Location: index.php");
+        exit;
+    }
+
+    if ($action === 'delete_location') {
+        $id = (int)$_POST['id'];
+        $stmt = $pdo->prepare("DELETE FROM locations WHERE id = ?");
+        $stmt->execute([$id]);
+        header("Location: index.php");
+        exit;
+    }
+
     // -- TESTIMONIALS --
     if ($action === 'add_testimonial') {
         $author = $_POST['author'];

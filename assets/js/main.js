@@ -8,13 +8,14 @@ let TIRE_CATEGORIES = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
-        const [tiresRes, servicesRes, categoriesRes, extraRes, testiRes, settingsRes] = await Promise.all([
+        const [tiresRes, servicesRes, categoriesRes, extraRes, testiRes, settingsRes, locationsRes] = await Promise.all([
             fetch('admin/api.php?type=tires'),
             fetch('admin/api.php?type=services'),
             fetch('admin/api.php?type=categories'),
             fetch('admin/api.php?type=extra_services'),
             fetch('admin/api.php?type=testimonials'),
-            fetch('admin/api.php?type=settings')
+            fetch('admin/api.php?type=settings'),
+            fetch('admin/api.php?type=locations')
         ]);
         
         if (categoriesRes.ok) {
@@ -38,6 +39,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (settingsRes.ok) {
             const settingsData = await settingsRes.json();
             applySettings(settingsData);
+        }
+        if (locationsRes.ok) {
+            const locationsData = await locationsRes.json();
+            renderLocations(locationsData);
         }
     } catch (error) {
         console.error("Erreur lors du chargement des données:", error);
@@ -650,5 +655,70 @@ function applySettings(settingsData) {
                 fbBtn.style.display = 'inline-block';
             }
         }
+    }
+}
+
+function renderLocations(locations) {
+    const desktopBar = document.getElementById('dynamic-top-bar-desktop');
+    const mobileBar = document.getElementById('dynamic-top-bar-mobile');
+    
+    if (!desktopBar || !mobileBar) return;
+    if (!locations || locations.length === 0) {
+        desktopBar.innerHTML = '<span><i class="fa-solid fa-clock"></i> Aucun horaire défini.</span>';
+        mobileBar.innerHTML = '<span>Aucun horaire défini.</span>';
+        return;
+    }
+    
+    desktopBar.replaceChildren();
+    
+    // Desktop layout
+    locations.forEach(loc => {
+        const item = document.createElement('div');
+        item.className = 'location-item';
+        
+        let mapLink = loc.map_url ? `href="${loc.map_url}" target="_blank"` : `href="#"`;
+        let phoneLink = loc.phone ? `href="tel:${loc.phone.replace(/\s/g, '')}"` : `href="#"`;
+        
+        item.innerHTML = `
+            <a ${mapLink} style="color: var(--text-muted); text-decoration: none;" class="location-name">
+                <i class="fa-solid fa-location-dot"></i> ${loc.name}
+            </a>
+            <a ${phoneLink} style="color: var(--text-muted); text-decoration: none;">
+                <i class="fa-solid fa-phone"></i> ${loc.phone}
+            </a>
+            <span style="color: var(--accent-green);"><i class="fa-solid fa-clock"></i> ${loc.hours}</span>
+        `;
+        desktopBar.appendChild(item);
+    });
+    
+    // Mobile layout (Ticker / Scroller or just first element with a "Voir +")
+    mobileBar.replaceChildren();
+    
+    // We'll create a simple automatic slider if there's more than 1, otherwise just display the first one.
+    if (locations.length === 1) {
+        const loc = locations[0];
+        mobileBar.innerHTML = `<span style="color: var(--accent-green);">${loc.hours}</span> <span style="margin: 0 4px; color: var(--border-color);">/</span> <a href="${loc.map_url}" target="_blank" style="color: #fff;">${loc.name}</a> <span style="margin: 0 4px; color: var(--border-color);">/</span> <a href="tel:${loc.phone.replace(/\s/g, '')}" style="color: var(--primary-gold); font-weight: 700;">${loc.phone}</a>`;
+    } else {
+        const slider = document.createElement('div');
+        slider.style.display = 'flex';
+        slider.style.transition = 'transform 0.5s ease-in-out';
+        slider.style.width = '100%';
+        
+        locations.forEach(loc => {
+            const slide = document.createElement('div');
+            slide.style.minWidth = '100%';
+            slide.style.textAlign = 'center';
+            slide.innerHTML = `<span style="color: var(--accent-green);">${loc.hours}</span> <span style="margin: 0 4px; color: var(--border-color);">/</span> <a href="${loc.map_url}" target="_blank" style="color: #fff;">${loc.name}</a> <span style="margin: 0 4px; color: var(--border-color);">/</span> <a href="tel:${loc.phone.replace(/\s/g, '')}" style="color: var(--primary-gold); font-weight: 700;">${loc.phone}</a>`;
+            slider.appendChild(slide);
+        });
+        
+        mobileBar.style.overflow = 'hidden';
+        mobileBar.appendChild(slider);
+        
+        let currentSlide = 0;
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % locations.length;
+            slider.style.transform = \`translateX(-\${currentSlide * 100}%)\`;
+        }, 4000); // Change every 4 seconds
     }
 }

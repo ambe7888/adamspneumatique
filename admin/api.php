@@ -35,12 +35,15 @@ try {
         echo json_encode($stmt->fetchAll());
     } elseif ($type === 'settings') {
         $stmt = $pdo->query("SELECT * FROM settings");
-        // Convert to key-value object
+        // Convert to key-value array
         $settings = [];
         foreach($stmt->fetchAll() as $row) {
-            $settings[$row['setting_key']] = $row['setting_value'];
+            $settings[] = ['setting_key' => $row['setting_key'], 'setting_value' => $row['setting_value']];
         }
         echo json_encode($settings);
+    } elseif ($type === 'locations') {
+        $stmt = $pdo->query("SELECT * FROM locations");
+        echo json_encode($stmt->fetchAll());
     } else {
         echo json_encode(['error' => 'Type non spécifié']);
     }

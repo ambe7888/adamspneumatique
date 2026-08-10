@@ -60,6 +60,11 @@ $settings = [];
 foreach($settings_raw as $s) {
     $settings[$s['setting_key']] = $s['setting_value'];
 }
+
+$locations = [];
+try {
+    $locations = $pdo->query("SELECT * FROM locations")->fetchAll();
+} catch(Exception $e) {}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -308,6 +313,46 @@ foreach($settings_raw as $s) {
                 </td>
             </tr>
             <?php endforeach; ?>
+        </table>
+        </div>
+
+        <!-- Agences (Locations) -->
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 40px 0;">
+        <div class="section-header">
+            <h2><i class="fa-solid fa-map-location-dot" style="color: var(--secondary)"></i> Nos Agences (Max 3)</h2>
+            <?php if (count($locations) < 3): ?>
+                <button class="btn" onclick="document.getElementById('modalLocation').style.display='block'"><i class="fa-solid fa-plus"></i> Nouvelle Agence</button>
+            <?php else: ?>
+                <button class="btn btn-secondary" disabled title="Maximum 3 agences atteint"><i class="fa-solid fa-ban"></i> Limite atteinte (3/3)</button>
+            <?php endif; ?>
+        </div>
+        <div class="table-responsive">
+        <table>
+            <tr>
+                <th>Nom</th>
+                <th>Adresse</th>
+                <th>Téléphone</th>
+                <th>Horaires</th>
+                <th>Actions</th>
+            </tr>
+            <?php foreach($locations as $loc): ?>
+            <tr>
+                <td><?= htmlspecialchars($loc['name']) ?></td>
+                <td><small><?= htmlspecialchars($loc['address']) ?></small></td>
+                <td><?= htmlspecialchars($loc['phone']) ?></td>
+                <td><small><?= htmlspecialchars($loc['hours']) ?></small></td>
+                <td class="action-group">
+                    <form action="action.php" method="post" style="display:inline;">
+                        <input type="hidden" name="action" value="delete_location">
+                        <input type="hidden" name="id" value="<?= $loc['id'] ?>">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cette agence ?')">Suppr.</button>
+                    </form>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+            <?php if (count($locations) == 0): ?>
+            <tr><td colspan="5" style="text-align:center; color:var(--text-muted);">Aucune agence ajoutée.</td></tr>
+            <?php endif; ?>
         </table>
         </div>
 
@@ -635,6 +680,38 @@ foreach($settings_raw as $s) {
                 <input type="file" name="image" class="form-control" accept="image/*">
             </div>
             <button type="submit" class="btn">Mettre à jour</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modale Ajout Agence -->
+    <div id="modalLocation" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="document.getElementById('modalLocation').style.display='none'">&times;</span>
+        <h2>Ajouter une Agence</h2>
+        <form action="action.php" method="post">
+            <input type="hidden" name="action" value="add_location">
+            <div class="form-group">
+                <label>Nom de l'agence (ex: Treichville)</label>
+                <input type="text" name="name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Adresse Physique</label>
+                <input type="text" name="address" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Téléphone d'appel</label>
+                <input type="text" name="phone" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Horaires d'ouverture</label>
+                <input type="text" name="hours" class="form-control" placeholder="ex: 07h30 - 19h00" required>
+            </div>
+            <div class="form-group">
+                <label>Lien vers Google Maps (URL)</label>
+                <input type="text" name="map_url" class="form-control" required>
+            </div>
+            <button type="submit" class="btn">Enregistrer</button>
         </form>
       </div>
     </div>
