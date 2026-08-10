@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function renderDynamicCategories() {
+    if (!Array.isArray(TIRE_CATEGORIES)) return;
     const tabsContainer = document.getElementById('catalog-tabs-container');
     const selectCalc = document.getElementById('calc-category');
 
@@ -92,6 +93,7 @@ function renderDynamicCategories() {
 }
 
 function renderServices(services) {
+    if (!Array.isArray(services)) return;
     const container = document.getElementById('services-grid-container');
     if (!container) return;
     
@@ -531,6 +533,7 @@ function initSmoothScroll() {
 /* 7. Dynamic Data Renderers                                                  */
 /* -------------------------------------------------------------------------- */
 function renderExtraServices(services) {
+    if (!Array.isArray(services)) return;
     const container = document.getElementById('extra-services-container');
     if (!container) return;
     
@@ -563,6 +566,7 @@ function renderExtraServices(services) {
 }
 
 function renderTestimonials(testimonials) {
+    if (!Array.isArray(testimonials)) return;
     const container = document.getElementById('testimonials-container');
     if (!container) return;
     
@@ -598,6 +602,7 @@ function renderTestimonials(testimonials) {
 }
 
 function applySettings(settingsData) {
+    if (!Array.isArray(settingsData)) return;
     const settings = {};
     settingsData.forEach(s => {
         settings[s.setting_key] = s.setting_value;
@@ -685,7 +690,7 @@ function renderLocations(locations) {
     const mobileBar = document.getElementById('dynamic-top-bar-mobile');
     
     if (!desktopBar || !mobileBar) return;
-    if (!locations || locations.length === 0) {
+    if (!locations || locations.error || !Array.isArray(locations) || locations.length === 0) {
         desktopBar.innerHTML = '<span><i class="fa-solid fa-clock"></i> Aucun horaire défini.</span>';
         mobileBar.innerHTML = '<span>Aucun horaire défini.</span>';
         return;
