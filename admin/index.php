@@ -73,7 +73,7 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
         </div>
         <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 25px 0;">
 
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+        <div class="section-header">
             <h2><i class="fa-solid fa-hand-holding-hand" style="color: var(--secondary)"></i> Gestion des Services</h2>
             <button class="btn" onclick="document.getElementById('modalService').style.display='block'"><i class="fa-solid fa-plus"></i> Nouveau Service</button>
         </div>
@@ -125,7 +125,7 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
 
         <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 40px 0;">
 
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+        <div class="section-header">
             <h2><i class="fa-solid fa-tags" style="color: var(--secondary)"></i> Catégories de Pneus</h2>
             <button class="btn" onclick="document.getElementById('modalCategory').style.display='block'"><i class="fa-solid fa-plus"></i> Nouvelle Catégorie</button>
         </div>
@@ -158,7 +158,7 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
 
         <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 40px 0;">
 
-        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+        <div class="section-header">
             <h2><i class="fa-solid fa-tire" style="color: var(--secondary)"></i> Gestion des Pneus</h2>
             <button class="btn" onclick="document.getElementById('modalTire').style.display='block'"><i class="fa-solid fa-plus"></i> Nouveau Pneu</button>
         </div>

@@ -134,7 +134,21 @@ tr:last-child td {
     opacity: 0.8;
 }
 
-.action-group form { display: inline-block; margin-right: 4px; }
+.action-group {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+.action-group form { margin: 0; }
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
 
 /* --- Forms --- */
 .form-group {
@@ -227,7 +241,7 @@ tr:last-child td {
 
 .modal-content {
     background-color: var(--card-bg);
-    margin: 5% auto; 
+    margin: 5vh auto; 
     padding: 30px;
     border: none;
     width: 90%;
@@ -235,6 +249,9 @@ tr:last-child td {
     border-radius: 12px;
     box-shadow: var(--shadow-lg);
     animation: modalFadeIn 0.3s ease-out;
+    position: relative;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
 @keyframes modalFadeIn {
@@ -244,12 +261,15 @@ tr:last-child td {
 
 .close {
     color: #94a3b8;
-    float: right;
+    position: absolute;
+    right: 20px;
+    top: 20px;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
     line-height: 1;
     transition: color 0.2s;
+    z-index: 10;
 }
 
 .close:hover {
@@ -270,17 +290,30 @@ tr:last-child td {
         padding: 12px 18px; /* Bigger touch target */
     }
     
+    
+    .action-group {
+        flex-direction: row;
+        justify-content: stretch;
+    }
     .action-group form, .action-group .btn {
-        display: block;
+        flex: 1;
         width: 100%;
-        margin-bottom: 8px;
+        margin-bottom: 4px;
         box-sizing: border-box;
         text-align: center;
+        padding: 10px 8px; /* Slightly taller for touch */
     }
     
+    .section-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .section-header h2 { margin-bottom: 5px; text-align: center; }
+    .section-header .btn { width: 100%; }
+
     .modal-content {
-        margin: 10% auto;
+        margin: 5vh auto;
         width: 95%;
-        padding: 20px;
+        padding: 40px 15px 20px 15px; /* Extra top padding for close button */
     }
 }
