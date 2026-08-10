@@ -27,11 +27,14 @@ if (!isset($_SESSION['admin_logged_in'])) {
         <meta charset="UTF-8">
         <title>Connexion Administration</title>
         <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     </head>
     <body>
         <div class="login-box">
-            <h2>Administration Adams Pneumatique</h2>
-            <?php if(isset($error)) echo "<div class='error-msg'>$error</div>"; ?>
+            <i class="fa-solid fa-lock" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
+            <h2>Espace Sécurisé</h2>
+            <p style="color: var(--text-muted); margin-bottom: 25px;">Administration Adams Pneumatique</p>
+            <?php if(isset($error)) echo "<div class='error-msg'><i class='fa-solid fa-circle-exclamation'></i> $error</div>"; ?>
             <form method="post">
                 <div class="form-group">
                     <input type="password" name="password" class="form-control" placeholder="Mot de passe" required>
@@ -54,29 +57,26 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tableau de Bord - Adams Pneumatique</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-        .action-group form { display: inline; margin-right: 5px; }
-        .btn-sm { padding: 5px 10px; font-size: 0.85em; }
-        .btn-secondary { background: #6c757d; }
-        .btn-secondary:hover { background: #5a6268; }
-        .btn-info { background: #17a2b8; }
-        .btn-info:hover { background: #138496; }
-        .row-hidden { opacity: 0.5; background-color: #f8f9fa; }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h1>Tableau de Bord</h1>
-            <a href="?logout=1" class="btn btn-danger">Déconnexion</a>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+            <h1 style="margin: 0;"><i class="fa-solid fa-gauge-high" style="color: var(--primary)"></i> Tableau de Bord</h1>
+            <div>
+                <a href="../index.html" target="_blank" class="btn btn-secondary"><i class="fa-solid fa-globe"></i> Voir le site</a>
+                <a href="?logout=1" class="btn btn-danger"><i class="fa-solid fa-right-from-bracket"></i> Déconnexion</a>
+            </div>
         </div>
-        <p><a href="../index.html" target="_blank">Voir le site public</a></p>
-        <hr>
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 25px 0;">
 
-        <h2>Gestion des Services</h2>
-        <button class="btn" onclick="document.getElementById('modalService').style.display='block'">Ajouter un Service</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <h2><i class="fa-solid fa-hand-holding-hand" style="color: var(--secondary)"></i> Gestion des Services</h2>
+            <button class="btn" onclick="document.getElementById('modalService').style.display='block'"><i class="fa-solid fa-plus"></i> Nouveau Service</button>
+        </div>
         <div class="table-responsive">
         <table>
             <tr>
@@ -123,10 +123,12 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
         </table>
         </div>
 
-        <hr style="margin: 40px 0;">
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 40px 0;">
 
-        <h2>Catégories de Pneus</h2>
-        <button class="btn" onclick="document.getElementById('modalCategory').style.display='block'">Ajouter une Catégorie</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <h2><i class="fa-solid fa-tags" style="color: var(--secondary)"></i> Catégories de Pneus</h2>
+            <button class="btn" onclick="document.getElementById('modalCategory').style.display='block'"><i class="fa-solid fa-plus"></i> Nouvelle Catégorie</button>
+        </div>
         <div class="table-responsive">
         <table>
             <tr>
@@ -154,10 +156,12 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
         </table>
         </div>
 
-        <hr style="margin: 40px 0;">
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 40px 0;">
 
-        <h2>Gestion des Pneus</h2>
-        <button class="btn" onclick="document.getElementById('modalTire').style.display='block'">Ajouter un Pneu</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <h2><i class="fa-solid fa-tire" style="color: var(--secondary)"></i> Gestion des Pneus</h2>
+            <button class="btn" onclick="document.getElementById('modalTire').style.display='block'"><i class="fa-solid fa-plus"></i> Nouveau Pneu</button>
+        </div>
         <div class="table-responsive">
         <table>
             <tr>
