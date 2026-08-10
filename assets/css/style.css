@@ -1,0 +1,1090 @@
+/* ==========================================================================
+   ADAMS PNEUMATIQUE SERVICES - Official Website Stylesheet
+   Design System: Dark Industrial Luxury with Gold & Neon Racing Accents
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap');
+
+:root {
+    /* Color Palette */
+    --bg-dark: #0b0d11;
+    --bg-card: #14171f;
+    --bg-card-hover: #1c202c;
+    --bg-glass: rgba(14, 17, 23, 0.92);
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-gold: rgba(255, 183, 3, 0.35);
+    
+    --primary-gold: #ffb703;
+    --primary-amber: #fb8500;
+    --primary-red: #d90429;
+    --accent-green: #06d6a0;
+    
+    --text-main: #f8f9fa;
+    --text-muted: #94a3b8;
+    --text-dark: #0b0d11;
+    
+    /* Gradients */
+    --grad-gold: linear-gradient(135deg, #ffb703 0%, #fb8500 100%);
+    --grad-dark: linear-gradient(180deg, #14171f 0%, #0b0d11 100%);
+    --grad-red: linear-gradient(135deg, #ef233c 0%, #d90429 100%);
+    --grad-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+    
+    /* Shadows & Effects */
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.5);
+    --shadow-gold: 0 10px 30px rgba(255, 183, 3, 0.3);
+    
+    /* Fonts */
+    --font-heading: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    
+    /* Spacing & Borders */
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 24px;
+    --radius-full: 9999px;
+    --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Reset & Base */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: #ffffff;
+    line-height: 1.25;
+    font-weight: 700;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+ul {
+    list-style: none;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Layout Utils */
+.container {
+    width: 92%;
+    max-width: 1240px;
+    margin: 0 auto;
+}
+
+.text-gold {
+    background: var(--grad-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+}
+
+.text-red {
+    color: var(--primary-red);
+}
+
+.section-padding {
+    padding: 80px 0;
+}
+
+.section-header {
+    text-align: center;
+    max-width: 720px;
+    margin: 0 auto 40px auto;
+}
+
+.section-header .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    background: rgba(255, 183, 3, 0.1);
+    border: 1px solid var(--border-gold);
+    border-radius: var(--radius-full);
+    color: var(--primary-gold);
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+}
+
+.section-header h2 {
+    font-size: 2.3rem;
+    margin-bottom: 14px;
+}
+
+.section-header p {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 26px;
+    border-radius: var(--radius-md);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border: none;
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background: var(--grad-gold);
+    color: var(--text-dark);
+    box-shadow: var(--shadow-gold);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(255, 183, 3, 0.5);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-main);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+}
+
+.btn-whatsapp {
+    background: #25d366;
+    color: #ffffff;
+    box-shadow: 0 10px 25px rgba(37, 211, 102, 0.3);
+}
+
+.btn-whatsapp:hover {
+    background: #20ba5a;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(37, 211, 102, 0.4);
+}
+
+/* Top Bar */
+.top-bar {
+    background: #07080b;
+    border-bottom: 1px solid var(--border-color);
+    padding: 8px 0;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.top-bar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.mobile-top-bar {
+    display: none !important;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--accent-green);
+    font-weight: 600;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--accent-green);
+    border-radius: 50%;
+    position: relative;
+}
+
+.pulse-dot::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 50%;
+    border: 2px solid var(--accent-green);
+    animation: pulse 1.8s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.5); opacity: 1; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+
+.top-contact {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.top-contact a {
+    color: var(--text-muted);
+    transition: var(--transition);
+}
+
+.top-contact a:hover {
+    color: var(--primary-gold);
+}
+
+/* Header & Navbar */
+.header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--bg-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border-color);
+    padding: 14px 0;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--grad-gold);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dark);
+    font-size: 1.2rem;
+    box-shadow: var(--shadow-gold);
+}
+
+.logo-text h1 {
+    font-size: 1.2rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin: 0;
+    line-height: 1.1;
+}
+
+.logo-text span {
+    font-size: 0.68rem;
+    color: var(--primary-gold);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+    display: block;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.nav-links a {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    padding: 6px 0;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: #ffffff;
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+.mobile-toggle {
+    display: none;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--border-color);
+    color: #ffffff;
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-sm);
+    font-size: 1.2rem;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+}
+
+.mobile-btn-devis {
+    display: none !important;
+}
+
+/* Hero Section */
+.hero {
+    position: relative;
+    padding: 80px 0 100px 0;
+    background: linear-gradient(180deg, rgba(11, 13, 17, 0.7) 0%, var(--bg-dark) 100%),
+                url('../images/hero.png') center/cover no-repeat;
+    overflow: hidden;
+}
+
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    align-items: center;
+}
+
+.hero-content h1 {
+    font-size: 3.2rem;
+    font-weight: 900;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.hero-content p {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+    margin-bottom: 30px;
+    max-width: 95%;
+}
+
+.hero-features {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 35px;
+    flex-wrap: wrap;
+}
+
+.feature-tag {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-color);
+    font-size: 0.88rem;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+/* Tire Finder Widget */
+.tire-finder-box {
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--border-gold);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+}
+
+.tire-finder-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--grad-gold);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.finder-header {
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+}
+
+.finder-header h3 {
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 14px;
+    background: rgba(11, 13, 17, 0.85);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    color: #ffffff;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-gold);
+    box-shadow: 0 0 0 3px rgba(255, 183, 3, 0.15);
+}
+
+.grid-3-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+}
+
+/* Services Grid */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.service-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: var(--transition);
+    position: relative;
+}
+
+.service-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--border-gold);
+    box-shadow: var(--shadow-lg);
+}
+
+.service-img {
+    height: 180px;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+.service-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.service-card:hover .service-img img {
+    transform: scale(1.08);
+}
+
+.service-body {
+    padding: 22px;
+}
+
+.service-icon {
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 183, 3, 0.1);
+    border: 1px solid var(--border-gold);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-gold);
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+}
+
+.service-body h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.service-body p {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    margin-bottom: 18px;
+}
+
+.service-link {
+    color: var(--primary-gold);
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.88rem;
+}
+
+.service-link:hover {
+    gap: 10px;
+}
+
+/* Tire Catalog & Filter */
+.catalog-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 35px;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.tab-btn.active, .tab-btn:hover {
+    background: var(--grad-gold);
+    color: var(--text-dark);
+    border-color: transparent;
+}
+
+.catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.tire-item {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 22px;
+    position: relative;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.tire-item:hover {
+    border-color: var(--border-gold);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.tire-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.tire-brand-tag {
+    background: rgba(255, 183, 3, 0.12);
+    color: var(--primary-gold);
+    border: 1px solid var(--border-gold);
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+
+.tire-badge {
+    padding: 4px 10px;
+    border-radius: var(--radius-full);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.badge-new {
+    background: rgba(6, 214, 160, 0.15);
+    color: var(--accent-green);
+    border: 1px solid var(--accent-green);
+}
+
+.badge-occ {
+    background: rgba(255, 183, 3, 0.15);
+    color: var(--primary-gold);
+    border: 1px solid var(--primary-gold);
+}
+
+.tire-item h4 {
+    font-size: 1.2rem;
+    margin-bottom: 8px;
+    color: #ffffff;
+}
+
+.tire-specs {
+    display: flex;
+    gap: 12px;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+}
+
+.tire-price {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border-color);
+}
+
+.price-val {
+    font-family: var(--font-heading);
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+/* Page Devis Form Section */
+.devis-section {
+    background: var(--grad-dark);
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.devis-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border-gold);
+    border-radius: var(--radius-lg);
+    padding: 38px;
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    box-shadow: var(--shadow-lg);
+}
+
+.devis-form-side h3 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+.devis-result-card {
+    background: rgba(11, 13, 17, 0.92);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.calc-total {
+    font-size: 2.6rem;
+    font-family: var(--font-heading);
+    font-weight: 900;
+    color: var(--primary-gold);
+    margin: 12px 0;
+}
+
+.devis-submit-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+/* Reviews & Testimonials */
+.reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 22px;
+}
+
+.review-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 25px;
+}
+
+.stars {
+    color: var(--primary-gold);
+    margin-bottom: 12px;
+    display: flex;
+    gap: 4px;
+    font-size: 0.9rem;
+}
+
+.review-text {
+    font-style: italic;
+    color: var(--text-muted);
+    margin-bottom: 18px;
+    font-size: 0.94rem;
+}
+
+.reviewer {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.reviewer-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--grad-gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
+/* Location & Contact */
+.location-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 35px;
+    align-items: center;
+}
+
+.info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    margin-top: 25px;
+}
+
+.info-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.info-icon {
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 183, 3, 0.1);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-gold);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.map-container {
+    height: 420px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.map-container iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+/* Yellow Floating Button "Obtenir un devis" & WhatsApp Button */
+.floating-wa-btn {
+    position: fixed;
+    bottom: 95px;
+    right: 24px;
+    z-index: 999;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 58px;
+    height: 58px;
+    background: #25D366;
+    color: #ffffff;
+    border-radius: 50%;
+    font-size: 2rem;
+    box-shadow: 0 10px 25px rgba(37, 211, 102, 0.4);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.floating-wa-btn:hover {
+    transform: scale(1.1) translateY(-3px);
+    box-shadow: 0 15px 35px rgba(37, 211, 102, 0.6);
+    color: #fff;
+}
+
+.floating-devis-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 999;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    background: var(--grad-gold);
+    color: var(--text-dark);
+    border-radius: var(--radius-full);
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 0.95rem;
+    box-shadow: var(--shadow-gold);
+    cursor: pointer;
+    border: none;
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.floating-devis-btn:hover {
+    transform: scale(1.05) translateY(-3px);
+    box-shadow: 0 15px 35px rgba(255, 183, 3, 0.6);
+}
+
+/* Footer */
+.footer {
+    background: #07080b;
+    border-top: 1px solid var(--border-color);
+    padding: 60px 0 30px 0;
+    color: var(--text-muted);
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1.5fr;
+    gap: 35px;
+    margin-bottom: 40px;
+}
+
+.footer-col h4 {
+    color: #ffffff;
+    font-size: 1.05rem;
+    margin-bottom: 18px;
+}
+
+.footer-col ul {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.footer-bottom {
+    border-top: 1px solid var(--border-color);
+    padding-top: 25px;
+    text-align: center;
+    font-size: 0.85rem;
+}
+
+/* ==========================================================================
+   RESPONSIVE MEDIA QUERIES (Ajustement Aéré et Spacieux sur Mobile)
+   ========================================================================== */
+@media (max-width: 992px) {
+    .hero-grid, .devis-box, .location-grid, .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+    
+    .nav-links {
+        display: none;
+    }
+    
+    .mobile-toggle {
+        display: flex;
+    }
+
+    /* Clean Mobile Menu Drawer */
+    .nav-links.mobile-active {
+        display: flex !important;
+        flex-direction: column !important;
+        position: absolute;
+        top: calc(100% + 14px);
+        left: 0;
+        right: 0;
+        background: #14171f;
+        padding: 24px 20px;
+        border-bottom: 2px solid var(--primary-gold);
+        box-shadow: var(--shadow-lg);
+        gap: 16px;
+        z-index: 1001;
+    }
+
+    .nav-links.mobile-active a {
+        font-size: 1.1rem;
+        padding: 10px 0;
+        border-bottom: 1px solid var(--border-color);
+        width: 100%;
+        color: #ffffff;
+    }
+}
+
+@media (max-width: 768px) {
+    .desktop-top-bar {
+        display: none !important;
+    }
+    .mobile-top-bar {
+        display: flex !important;
+    }
+
+    .top-bar-content {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.76rem;
+    }
+
+    .header {
+        padding: 10px 0;
+    }
+    
+    .navbar {
+        flex-wrap: wrap;
+    }
+
+    .logo-text h1 {
+        font-size: 1.15rem;
+        white-space: nowrap;
+    }
+
+    .desktop-subtitle {
+        display: none !important;
+    }
+
+    .logo-icon {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+
+    .desktop-btn-devis {
+        display: none !important; 
+    }
+    
+    .mobile-btn-devis {
+        display: flex !important;
+        width: 100%;
+        margin-top: 15px;
+        order: 3;
+    }
+
+    .hero {
+        padding: 40px 0 60px 0;
+    }
+
+    .hero-content h1 {
+        font-size: 2.1rem;
+        line-height: 1.25;
+        margin-top: 10px;
+        margin-bottom: 16px;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 22px;
+        max-width: 100%;
+    }
+
+    .hero-features {
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 24px;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+    }
+
+    .hero-buttons .btn {
+        width: 100%;
+        padding: 14px 18px;
+    }
+
+    .tire-finder-box {
+        padding: 22px 18px;
+        margin-top: 15px;
+    }
+
+    .devis-box {
+        padding: 24px 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-padding {
+        padding: 40px 0;
+    }
+
+    .hero-content h1 {
+        font-size: 1.85rem;
+    }
+
+    .grid-3-col {
+        grid-template-columns: 1fr;
+    }
+
+    .floating-wa-btn {
+        bottom: 80px;
+        right: 16px;
+        width: 50px;
+        height: 50px;
+        font-size: 1.6rem;
+    }
+
+    .floating-devis-btn {
+        bottom: 16px;
+        right: 16px;
+        padding: 12px 18px;
+        font-size: 0.85rem;
+    }
+}
