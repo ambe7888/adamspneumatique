@@ -77,6 +77,7 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
 
         <h2>Gestion des Services</h2>
         <button class="btn" onclick="document.getElementById('modalService').style.display='block'">Ajouter un Service</button>
+        <div class="table-responsive">
         <table>
             <tr>
                 <th>Statut</th>
@@ -120,11 +121,13 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
             </tr>
             <?php endforeach; ?>
         </table>
+        </div>
 
         <hr style="margin: 40px 0;">
 
         <h2>Catégories de Pneus</h2>
         <button class="btn" onclick="document.getElementById('modalCategory').style.display='block'">Ajouter une Catégorie</button>
+        <div class="table-responsive">
         <table>
             <tr>
                 <th>Identifiant (slug)</th>
@@ -149,14 +152,17 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
             </tr>
             <?php endforeach; ?>
         </table>
+        </div>
 
         <hr style="margin: 40px 0;">
 
         <h2>Gestion des Pneus</h2>
         <button class="btn" onclick="document.getElementById('modalTire').style.display='block'">Ajouter un Pneu</button>
+        <div class="table-responsive">
         <table>
             <tr>
                 <th>Statut</th>
+                <th>Image</th>
                 <th>Marque & Modèle</th>
                 <th>Dimensions</th>
                 <th>Catégorie</th>
@@ -177,12 +183,13 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
                         </button>
                     </form>
                 </td>
+                <td><?php if(!empty($t['image'])): ?><img src="../<?= $t['image'] ?>" alt="" width="50"><?php endif; ?></td>
                 <td><?= htmlspecialchars($t['brand'] . ' - ' . $t['model']) ?></td>
                 <td><?= htmlspecialchars($t['width'] . '/' . $t['ratio'] . ' ' . $t['rim']) ?></td>
                 <td><?= htmlspecialchars($t['category']) ?> (<?= htmlspecialchars($t['condition_type']) ?>)</td>
                 <td><?= htmlspecialchars($t['price']) ?> FCFA</td>
                 <td class="action-group">
-                    <button class="btn btn-sm btn-info" onclick="openEditTire(<?= $t['id'] ?>, '<?= htmlspecialchars(addslashes($t['brand'])) ?>', '<?= htmlspecialchars(addslashes($t['model'])) ?>', '<?= $t['width'] ?>', '<?= $t['ratio'] ?>', '<?= $t['rim'] ?>', '<?= $t['category'] ?>', '<?= $t['condition_type'] ?>', <?= $t['price'] ?>, '<?= htmlspecialchars(addslashes($t['description'])) ?>')">Modifier</button>
+                    <button class="btn btn-sm btn-info" onclick="openEditTire(<?= $t['id'] ?>, '<?= htmlspecialchars(addslashes($t['brand'])) ?>', '<?= htmlspecialchars(addslashes($t['model'])) ?>', '<?= $t['width'] ?>', '<?= $t['ratio'] ?>', '<?= $t['rim'] ?>', '<?= $t['category'] ?>', '<?= $t['condition_type'] ?>', <?= $t['price'] ?>, '<?= htmlspecialchars(addslashes($t['description'])) ?>', '<?= $t['image'] ?>')">Modifier</button>
 
                     <form action="action.php" method="post">
                         <input type="hidden" name="action" value="duplicate_tire">
@@ -199,6 +206,7 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
             </tr>
             <?php endforeach; ?>
         </table>
+        </div>
     </div>
 
     <!-- Modale Ajout Service -->
@@ -322,7 +330,7 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
       <div class="modal-content">
         <span class="close" onclick="document.getElementById('modalTire').style.display='none'">&times;</span>
         <h2>Ajouter un Pneu</h2>
-        <form action="action.php" method="post">
+        <form action="action.php" method="post" enctype="multipart/form-data">
             <input type="hidden" name="action" value="add_tire">
             <div class="form-group">
                 <label>Marque</label>
@@ -360,6 +368,10 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
                 <label>Description courte</label>
                 <textarea name="description" class="form-control" required></textarea>
             </div>
+            <div class="form-group">
+                <label>Image du pneu (optionnelle)</label>
+                <input type="file" name="image" class="form-control" accept="image/*">
+            </div>
             <button type="submit" class="btn">Enregistrer</button>
         </form>
       </div>
@@ -370,9 +382,10 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
       <div class="modal-content">
         <span class="close" onclick="document.getElementById('modalEditTire').style.display='none'">&times;</span>
         <h2>Modifier le Pneu</h2>
-        <form action="action.php" method="post">
+        <form action="action.php" method="post" enctype="multipart/form-data">
             <input type="hidden" name="action" value="edit_tire">
             <input type="hidden" name="id" id="editTireId">
+            <input type="hidden" name="existing_image" id="editTireExistingImage">
             <div class="form-group">
                 <label>Marque</label>
                 <input type="text" name="brand" id="editTireBrand" class="form-control" required>
@@ -409,6 +422,10 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
                 <label>Description courte</label>
                 <textarea name="description" id="editTireDesc" class="form-control" required></textarea>
             </div>
+            <div class="form-group">
+                <label>Nouvelle image (laisser vide pour conserver l'actuelle)</label>
+                <input type="file" name="image" class="form-control" accept="image/*">
+            </div>
             <button type="submit" class="btn">Mettre à jour</button>
         </form>
       </div>
@@ -424,7 +441,7 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
             document.getElementById('modalEditService').style.display = 'block';
         }
 
-        function openEditTire(id, brand, model, width, ratio, rim, category, condition, price, desc) {
+        function openEditTire(id, brand, model, width, ratio, rim, category, condition, price, desc, image) {
             document.getElementById('editTireId').value = id;
             document.getElementById('editTireBrand').value = brand;
             document.getElementById('editTireModel').value = model;
@@ -435,6 +452,7 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
             document.getElementById('editTireCondition').value = condition;
             document.getElementById('editTirePrice').value = price;
             document.getElementById('editTireDesc').value = desc;
+            document.getElementById('editTireExistingImage').value = image;
             document.getElementById('modalEditTire').style.display = 'block';
         }
     </script>

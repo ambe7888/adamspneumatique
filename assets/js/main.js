@@ -273,6 +273,22 @@ function renderCatalogItems(items) {
         itemHeader.appendChild(badge);
         itemCard.appendChild(itemHeader);
 
+        if (tire.image) {
+            const tireImgWrapper = document.createElement('div');
+            tireImgWrapper.style.textAlign = 'center';
+            tireImgWrapper.style.margin = '15px 0';
+            const tireImg = document.createElement('img');
+            tireImg.src = tire.image;
+            tireImg.alt = `${tire.brand} ${tire.model}`;
+            tireImg.style.maxWidth = '100%';
+            tireImg.style.height = 'auto';
+            tireImg.style.maxHeight = '150px';
+            tireImg.style.objectFit = 'contain';
+            tireImg.style.borderRadius = '8px';
+            tireImgWrapper.appendChild(tireImg);
+            itemCard.appendChild(tireImgWrapper);
+        }
+
         const title = document.createElement('h4');
         title.textContent = `${tire.width}/${tire.ratio} ${tire.rim} - ${tire.model}`;
         itemCard.appendChild(title);

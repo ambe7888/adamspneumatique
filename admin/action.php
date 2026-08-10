@@ -144,8 +144,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $price = (int)$_POST['price'];
         $description = $_POST['description'];
 
-        $stmt = $pdo->prepare("INSERT INTO tires (brand, model, width, ratio, rim, category, condition_type, price, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$brand, $model, $width, $ratio, $rim, $category, $condition_type, $price, $description]);
+        $imagePath = '';
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $tmp_name = $_FILES['image']['tmp_name'];
+            $name = basename($_FILES['image']['name']);
+            $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                $uniqueName = time() . '_tire_' . $name;
+                $dest = '../assets/images/' . $uniqueName;
+                if (move_uploaded_file($tmp_name, $dest)) {
+                    $imagePath = 'assets/images/' . $uniqueName;
+                }
+            }
+        }
+
+        $stmt = $pdo->prepare("INSERT INTO tires (brand, model, width, ratio, rim, category, condition_type, price, description, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$brand, $model, $width, $ratio, $rim, $category, $condition_type, $price, $description, $imagePath]);
         
         header("Location: index.php");
         exit;
@@ -163,8 +177,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $price = (int)$_POST['price'];
         $description = $_POST['description'];
 
-        $stmt = $pdo->prepare("UPDATE tires SET brand=?, model=?, width=?, ratio=?, rim=?, category=?, condition_type=?, price=?, description=? WHERE id=?");
-        $stmt->execute([$brand, $model, $width, $ratio, $rim, $category, $condition_type, $price, $description, $id]);
+        $imagePath = $_POST['existing_image'] ?? '';
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $tmp_name = $_FILES['image']['tmp_name'];
+            $name = basename($_FILES['image']['name']);
+            $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                $uniqueName = time() . '_tire_' . $name;
+                $dest = '../assets/images/' . $uniqueName;
+                if (move_uploaded_file($tmp_name, $dest)) {
+                    if ($imagePath && file_exists('../' . $imagePath)) unlink('../' . $imagePath);
+                    $imagePath = 'assets/images/' . $uniqueName;
+                }
+            }
+        }
+
+        $stmt = $pdo->prepare("UPDATE tires SET brand=?, model=?, width=?, ratio=?, rim=?, category=?, condition_type=?, price=?, description=?, image=? WHERE id=?");
+        $stmt->execute([$brand, $model, $width, $ratio, $rim, $category, $condition_type, $price, $description, $imagePath, $id]);
         
         header("Location: index.php");
         exit;
@@ -172,6 +201,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($action === 'delete_tire') {
         $id = $_POST['id'];
+        
+        $stmt = $pdo->prepare("SELECT image FROM tires WHERE id = ?");
+        $stmt->execute([$id]);
+        $res = $stmt->fetch();
+        if ($res && $res['image']) {
+            $imgPath = '../' . $res['image'];
+            if (file_exists($imgPath)) unlink($imgPath);
+        }
+
         $stmt = $pdo->prepare("DELETE FROM tires WHERE id = ?");
         $stmt->execute([$id]);
         
@@ -187,8 +225,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($tire) {
             $newModel = $tire['model'] . ' (Copie)';
-            $stmtInsert = $pdo->prepare("INSERT INTO tires (brand, model, width, ratio, rim, category, condition_type, price, description, is_hidden) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmtInsert->execute([$tire['brand'], $newModel, $tire['width'], $tire['ratio'], $tire['rim'], $tire['category'], $tire['condition_type'], $tire['price'], $tire['description'], $tire['is_hidden'] ?? 0]);
+            $stmtInsert = $pdo->prepare("INSERT INTO tires (brand, model, width, ratio, rim, category, condition_type, price, description, image, is_hidden) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmtInsert->execute([$tire['brand'], $newModel, $tire['width'], $tire['ratio'], $tire['rim'], $tire['category'], $tire['condition_type'], $tire['price'], $tire['description'], $tire['image'], $tire['is_hidden'] ?? 0]);
         }
         header("Location: index.php");
         exit;

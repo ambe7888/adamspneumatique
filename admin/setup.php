@@ -37,6 +37,7 @@ try {
         condition_type VARCHAR(20) NOT NULL,
         price INT NOT NULL,
         description TEXT,
+        image VARCHAR(255),
         is_hidden TINYINT(1) DEFAULT 0
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
     $pdo->exec($sql_tires);
@@ -44,6 +45,7 @@ try {
     // Mises à jour des tables existantes (au cas où elles ont été créées avant cette mise à jour)
     try { $pdo->exec("ALTER TABLE services ADD COLUMN is_hidden TINYINT(1) DEFAULT 0;"); } catch(Exception $e) {}
     try { $pdo->exec("ALTER TABLE tires ADD COLUMN is_hidden TINYINT(1) DEFAULT 0;"); } catch(Exception $e) {}
+    try { $pdo->exec("ALTER TABLE tires ADD COLUMN image VARCHAR(255);"); } catch(Exception $e) {}
 
     // Initialisation des données de base si la table services est vide
     $stmt = $pdo->query("SELECT COUNT(*) FROM services");
