@@ -8,14 +8,15 @@ let TIRE_CATEGORIES = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
+        const t = Date.now();
         const [tiresRes, servicesRes, categoriesRes, extraRes, testiRes, settingsRes, locationsRes] = await Promise.all([
-            fetch('admin/api.php?type=tires'),
-            fetch('admin/api.php?type=services'),
-            fetch('admin/api.php?type=categories'),
-            fetch('admin/api.php?type=extra_services'),
-            fetch('admin/api.php?type=testimonials'),
-            fetch('admin/api.php?type=settings'),
-            fetch('admin/api.php?type=locations')
+            fetch(`admin/api.php?type=tires&t=${t}`),
+            fetch(`admin/api.php?type=services&t=${t}`),
+            fetch(`admin/api.php?type=categories&t=${t}`),
+            fetch(`admin/api.php?type=extra_services&t=${t}`),
+            fetch(`admin/api.php?type=testimonials&t=${t}`),
+            fetch(`admin/api.php?type=settings&t=${t}`),
+            fetch(`admin/api.php?type=locations&t=${t}`)
         ]);
         
         if (categoriesRes.ok) {
