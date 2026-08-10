@@ -645,6 +645,27 @@ function applySettings(settingsData) {
         if (footerMapLink) footerMapLink.href = settings.map_url;
     }
     
+    if (settings.video_url && settings.video_url.trim() !== '') {
+        let url = settings.video_url;
+        let videoId = '';
+        if (url.includes('youtube.com/watch?v=')) {
+            videoId = url.split('v=')[1].split('&')[0];
+        } else if (url.includes('youtu.be/')) {
+            videoId = url.split('youtu.be/')[1].split('?')[0];
+        } else if (url.includes('youtube.com/embed/')) {
+            videoId = url.split('embed/')[1].split('?')[0];
+        }
+        
+        if (videoId) {
+            const section = document.getElementById('presentation-video-section');
+            const iframe = document.getElementById('presentation-video-iframe');
+            if (section && iframe) {
+                iframe.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
+                section.style.display = 'block';
+            }
+        }
+    }
+    
     if (settings.facebook_url) {
         const fbBtn = document.getElementById('setting-footer-facebook');
         if (fbBtn) {

@@ -319,12 +319,8 @@ try {
         <!-- Agences (Locations) -->
         <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 40px 0;">
         <div class="section-header">
-            <h2><i class="fa-solid fa-map-location-dot" style="color: var(--secondary)"></i> Nos Agences (Max 3)</h2>
-            <?php if (count($locations) < 3): ?>
-                <button class="btn" onclick="document.getElementById('modalLocation').style.display='block'"><i class="fa-solid fa-plus"></i> Nouvelle Agence</button>
-            <?php else: ?>
-                <button class="btn btn-secondary" disabled title="Maximum 3 agences atteint"><i class="fa-solid fa-ban"></i> Limite atteinte (3/3)</button>
-            <?php endif; ?>
+            <h2><i class="fa-solid fa-map-location-dot" style="color: var(--secondary)"></i> Nos Agences</h2>
+            <button class="btn" onclick="document.getElementById('modalLocation').style.display='block'"><i class="fa-solid fa-plus"></i> Nouvelle Agence</button>
         </div>
         <div class="table-responsive">
         <table>
@@ -392,6 +388,10 @@ try {
                     <div class="form-group" style="grid-column: 1 / -1;">
                         <label>Lien vers Google Maps (URL)</label>
                         <input type="text" name="map_url" class="form-control" value="<?= htmlspecialchars($settings['map_url'] ?? '') ?>" required>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Lien Vidéo de présentation YouTube (URL, optionnel)</label>
+                        <input type="text" name="video_url" class="form-control" value="<?= htmlspecialchars($settings['video_url'] ?? '') ?>" placeholder="ex: https://www.youtube.com/watch?v=...">
                     </div>
                 </div>
                 <button type="submit" class="btn"><i class="fa-solid fa-save"></i> Enregistrer les informations</button>
