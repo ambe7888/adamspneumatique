@@ -3,7 +3,24 @@
  * Strictly enforcement of security rules (No innerHTML, XSS safe DOM manipulation)
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+let TIRE_DATABASE = [];
+
+document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const [tiresRes, servicesRes] = await Promise.all([
+            fetch('admin/api.php?type=tires'),
+            fetch('admin/api.php?type=services')
+        ]);
+        
+        if (tiresRes.ok) TIRE_DATABASE = await tiresRes.json();
+        if (servicesRes.ok) {
+            const servicesData = await servicesRes.json();
+            renderServices(servicesData);
+        }
+    } catch (error) {
+        console.error("Erreur lors du chargement des données:", error);
+    }
+
     initTireFinder();
     initDevisCalculator();
     initCatalogFilter();
@@ -12,17 +29,57 @@ document.addEventListener('DOMContentLoaded', () => {
     initPageDevisSubmission();
 });
 
-// Sample Tire Database with enhanced details
-const TIRE_DATABASE = [
-    { id: 1, brand: 'Michelin', model: 'Primacy 4', width: '195', ratio: '65', rim: 'R15', category: 'tourisme', condition: 'new', price: 38000, desc: 'Pneu été haute longévité, freinage exceptionnel sur sol mouillé.' },
-    { id: 2, brand: 'Bridgestone', model: 'Turanza ER300', width: '205', ratio: '55', rim: 'R16', category: 'tourisme', condition: 'new', price: 42000, desc: 'Confort de conduite silencieux et stabilité renforcée sur autoroute.' },
-    { id: 3, brand: 'Goodyear', model: 'EfficientGrip 2 SUV', width: '215', ratio: '60', rim: 'R17', category: 'suv', condition: 'new', price: 55000, desc: 'Excellente tenue de route pour 4x4 et SUV modernes sur routes abidjanaises.' },
-    { id: 4, brand: 'Continental', model: 'ContiCrossContact LX2', width: '265', ratio: '65', rim: 'R17', category: 'suv', condition: 'new', price: 68000, desc: 'Robuste tout-terrain et route pour tout franchissement et piste.' },
-    { id: 5, brand: 'Dunlop', model: 'SP LT30', width: '195', ratio: '70', rim: 'R15', category: 'utilitaire', condition: 'new', price: 48000, desc: 'Haute résistance aux charges lourdes pour camionnettes.' },
-    { id: 6, brand: 'Pirelli', model: 'Cinturato P7', width: '225', ratio: '45', rim: 'R17', category: 'tourisme', condition: 'occ', price: 25000, desc: 'Occasion contrôlée AAA, taux d usure très faible (< 15%).' },
-    { id: 7, brand: 'Triangle', model: 'TR652', width: '205', ratio: '75', rim: 'R16', category: 'utilitaire', condition: 'new', price: 39000, desc: 'Rapport qualité/prix imbattable pour utilitaires et livraison.' },
-    { id: 8, brand: 'Maxxis', model: 'MA-S2 Marauder', width: '275', ratio: '55', rim: 'R20', category: 'suv', condition: 'occ', price: 35000, desc: 'Profil sportif haut de gamme pour SUV premium.' }
-];
+function renderServices(services) {
+    const container = document.getElementById('services-grid-container');
+    if (!container) return;
+    
+    container.replaceChildren();
+    
+    services.forEach(service => {
+        const card = document.createElement('div');
+        card.className = 'service-card';
+        
+        const imgDiv = document.createElement('div');
+        imgDiv.className = 'service-img';
+        const img = document.createElement('img');
+        img.src = service.image;
+        img.alt = service.title;
+        imgDiv.appendChild(img);
+        
+        const bodyDiv = document.createElement('div');
+        bodyDiv.className = 'service-body';
+        
+        const iconDiv = document.createElement('div');
+        iconDiv.className = 'service-icon';
+        const icon = document.createElement('i');
+        icon.className = `fa-solid ${service.icon}`;
+        iconDiv.appendChild(icon);
+        
+        const title = document.createElement('h3');
+        title.textContent = service.title;
+        
+        const desc = document.createElement('p');
+        desc.textContent = service.desc;
+        
+        const link = document.createElement('a');
+        link.className = 'service-link';
+        link.href = service.link;
+        link.textContent = service.linkText + ' ';
+        const linkIcon = document.createElement('i');
+        linkIcon.className = 'fa-solid fa-arrow-right';
+        link.appendChild(linkIcon);
+        
+        bodyDiv.appendChild(iconDiv);
+        bodyDiv.appendChild(title);
+        bodyDiv.appendChild(desc);
+        bodyDiv.appendChild(link);
+        
+        card.appendChild(imgDiv);
+        card.appendChild(bodyDiv);
+        
+        container.appendChild(card);
+    });
+}
 
 /* -------------------------------------------------------------------------- */
 /* 1. Tire Finder Logic                                                      */

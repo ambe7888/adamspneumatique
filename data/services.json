@@ -1,0 +1,38 @@
+[
+    {
+        "id": 1,
+        "image": "assets/images/hero.png",
+        "icon": "fa-dharmachakra",
+        "title": "Vente de Pneus Neufs & Occasions",
+        "desc": "Large gamme de pneus certifiés des plus grandes marques (Michelin, Bridgestone, Continental, Goodyear, Pirelli, Maxxis, Yokohama...).",
+        "link": "#catalogue",
+        "linkText": "Voir le catalogue"
+    },
+    {
+        "id": 2,
+        "image": "assets/images/alignment.png",
+        "icon": "fa-crosshairs",
+        "title": "Parallélisme & Géométrie 3D",
+        "desc": "Réglage laser de précision pour éviter l'usure anormale des pneus et garantir une tenue de route parfaite à haute vitesse.",
+        "link": "#devis",
+        "linkText": "Demander un tarif"
+    },
+    {
+        "id": 3,
+        "image": "assets/images/battery.png",
+        "icon": "fa-car-battery",
+        "title": "Batteries Automobiles",
+        "desc": "Vente, test de charge et remplacement rapide de batteries haute performance certifiées avec garantie fabricant.",
+        "link": "#devis",
+        "linkText": "Consulter les stocks"
+    },
+    {
+        "id": 4,
+        "image": "assets/images/jantes.png",
+        "icon": "fa-scale-balanced",
+        "title": "Équilibrage & Jantes Alu/Acier",
+        "desc": "Équilibrage électronique dynamique pour supprimer les vibrations du volant et vente de jantes en alliage léger et acier.",
+        "link": "#devis",
+        "linkText": "Calculer un forfait"
+    }
+]
