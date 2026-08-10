@@ -11,8 +11,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // -- CATEGORIES --
     if ($action === 'add_category') {
-        $slug = preg_replace('/[^a-z0-9\-]/', '', strtolower($_POST['slug'])); // Sécurisation du slug
         $name = $_POST['name'];
+        // Génération automatique du slug à partir du nom
+        $slug = preg_replace('/[^a-z0-9\-]/', '', str_replace(' ', '-', strtolower($name)));
         $icon = $_POST['icon'];
         $base_price = (int)$_POST['base_price'];
 

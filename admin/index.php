@@ -307,10 +307,6 @@ $tire_categories = $pdo->query("SELECT * FROM tire_categories")->fetchAll();
                 <input type="text" name="name" class="form-control" required>
             </div>
             <div class="form-group">
-                <label>Identifiant court unique sans espace (ex: poids-lourd)</label>
-                <input type="text" name="slug" class="form-control" required>
-            </div>
-            <div class="form-group">
                 <label>Icône de l'onglet</label>
                 <select name="icon" class="form-control">
                     <option value="fa-car">Voiture (fa-car)</option>
