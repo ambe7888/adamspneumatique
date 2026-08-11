@@ -325,6 +325,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // -- CLEAR CACHE --
+    if ($action === 'clear_cache') {
+        $version = time();
+        // Écrire le timestamp dans un fichier de version pour forcer le rechargement des assets
+        $versionFile = '../assets/cache_version.txt';
+        file_put_contents($versionFile, $version);
+        
+        // Aussi mettre à jour le cache_version dans les settings
+        $stmt = $pdo->prepare("INSERT INTO settings (setting_key, setting_value) VALUES ('cache_version', ?) ON DUPLICATE KEY UPDATE setting_value = ?");
+        $stmt->execute([$version, $version]);
+        
+        header("Location: index.php?cache_cleared=1");
+        exit;
+    }
+
     // -- SETTINGS --
     if ($action === 'update_settings') {
         // Liste des clés autorisées

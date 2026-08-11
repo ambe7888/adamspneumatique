@@ -1,3 +1,7 @@
+<?php
+$cacheVersionFile = __DIR__ . '/assets/cache_version.txt';
+$cacheVer = file_exists($cacheVersionFile) ? trim(file_get_contents($cacheVersionFile)) : '4.0';
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -22,7 +26,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="assets/css/style.css?v=4.0">
+    <link rel="stylesheet" href="assets/css/style.css?v=<?= htmlspecialchars($cacheVer) ?>">
     
     <!-- JSON-LD Structured Data for Local Business -->
     <script type="application/ld+json">
@@ -459,6 +463,6 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="assets/js/main.js?v=4.0"></script>
+    <script src="assets/js/main.js?v=<?= htmlspecialchars($cacheVer) ?>"></script>
 </body>
 </html>

@@ -80,7 +80,7 @@ try {
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
             <h1 style="margin: 0;"><i class="fa-solid fa-gauge-high" style="color: var(--primary)"></i> Tableau de Bord</h1>
             <div>
-                <a href="../index.html" target="_blank" class="btn btn-secondary"><i class="fa-solid fa-globe"></i> Voir le site</a>
+                <a href="../index.php" target="_blank" class="btn btn-secondary"><i class="fa-solid fa-globe"></i> Voir le site</a>
                 <a href="?logout=1" class="btn btn-danger"><i class="fa-solid fa-right-from-bracket"></i> Déconnexion</a>
             </div>
         </div>
@@ -741,5 +741,31 @@ try {
             document.getElementById('modalEditTire').style.display = 'block';
         }
     </script>
+
+    <!-- Section Vider le Cache -->
+    <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 40px 0;">
+    <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); border: 1px solid #f72585; border-radius: 12px; padding: 30px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; margin-bottom: 40px;">
+        <div>
+            <h3 style="margin: 0 0 8px 0; color: #f72585; display:flex; align-items:center; gap: 10px;">
+                <i class="fa-solid fa-broom"></i> Vider le Cache du Site
+            </h3>
+            <p style="margin: 0; color: #94a3b8; font-size: 0.9rem;">
+                Force tous les visiteurs à télécharger la dernière version du CSS et du JavaScript.<br>
+                À utiliser après chaque modification pour que les changements soient visibles immédiatement.
+            </p>
+            <?php if(isset($_GET['cache_cleared']) && $_GET['cache_cleared'] == 1): ?>
+            <div style="margin-top: 12px; padding: 10px 16px; background: rgba(6,214,160,0.15); border: 1px solid #06d6a0; border-radius: 8px; color: #06d6a0; font-weight: 600; font-size: 0.88rem;">
+                <i class="fa-solid fa-circle-check"></i> Cache vidé avec succès ! La nouvelle version sera chargée par tous les visiteurs.
+            </div>
+            <?php endif; ?>
+        </div>
+        <form method="post" action="action.php" onsubmit="return confirm('Vider le cache maintenant ? Tous les visiteurs verront la dernière version du site.')">
+            <input type="hidden" name="action" value="clear_cache">
+            <button type="submit" style="background: linear-gradient(135deg, #f72585, #b5179e); color: white; border: none; padding: 14px 28px; border-radius: 10px; font-size: 1rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 10px; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 20px rgba(247,37,133,0.4);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <i class="fa-solid fa-broom"></i> Vider les Caches
+            </button>
+        </form>
+    </div>
+
 </body>
 </html>
