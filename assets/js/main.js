@@ -687,21 +687,19 @@ function applySettings(settingsData) {
     }
     
     if (settings.video_url && settings.video_url.trim() !== '') {
-        let url = settings.video_url;
-        let videoId = '';
-        if (url.includes('youtube.com/watch?v=')) {
-            videoId = url.split('v=')[1].split('&')[0];
-        } else if (url.includes('youtu.be/')) {
-            videoId = url.split('youtu.be/')[1].split('?')[0];
-        } else if (url.includes('youtube.com/embed/')) {
-            videoId = url.split('embed/')[1].split('?')[0];
-        }
+        const rawUrl = settings.video_url.trim();
+        const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+        const match = rawUrl.match(ytRegex);
         
-        if (videoId) {
-            const section = document.getElementById('presentation-video-section');
-            const iframe = document.getElementById('presentation-video-iframe');
-            if (section && iframe) {
-                iframe.src = `https://www.youtube.com/embed/${videoId}?rel=0`;
+        const section = document.getElementById('presentation-video-section');
+        const iframe = document.getElementById('presentation-video-iframe');
+        
+        if (section && iframe) {
+            if (match && match[1]) {
+                iframe.src = `https://www.youtube.com/embed/${match[1]}?rel=0`;
+                section.style.display = 'block';
+            } else if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) {
+                iframe.src = rawUrl;
                 section.style.display = 'block';
             }
         }
