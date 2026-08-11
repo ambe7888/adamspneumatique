@@ -7,35 +7,57 @@ let TIRE_DATABASE = [];
 let TIRE_CATEGORIES = [];
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Calcul du chemin de base pour que les appels API fonctionnent toujours
+    const BASE_URL = window.location.origin + '/';
+
+    const debugLog = (msg, isError = false) => {
+        console[isError ? 'error' : 'log']('[Adams]', msg);
+    };
+
     try {
         const t = Date.now();
         
         const fetchData = async (url) => {
             try {
+                debugLog('Fetch: ' + url);
                 const res = await fetch(url);
-                if (!res.ok) return null;
+                if (!res.ok) {
+                    debugLog('HTTP Error ' + res.status + ' sur ' + url, true);
+                    return null;
+                }
                 const text = await res.text();
+                // Vérifier si la réponse commence par du JSON valide
+                const trimmed = text.trim();
+                if (!trimmed.startsWith('[') && !trimmed.startsWith('{')) {
+                    debugLog('Réponse non-JSON sur ' + url + ': ' + trimmed.substring(0, 200), true);
+                    return null;
+                }
                 try {
-                    return JSON.parse(text);
+                    return JSON.parse(trimmed);
                 } catch (e) {
-                    console.error("Erreur JSON sur", url, text);
+                    debugLog('Erreur JSON parse sur ' + url + ': ' + trimmed.substring(0, 200), true);
                     return null;
                 }
             } catch (err) {
-                console.error("Erreur Fetch sur", url, err);
+                debugLog('Erreur Fetch sur ' + url + ': ' + err, true);
                 return null;
             }
         };
 
+        const apiBase = BASE_URL + 'admin/api.php';
         const [tiresData, servicesData, categoriesData, extraData, testiData, settingsData, locationsData] = await Promise.all([
-            fetchData(`admin/api.php?type=tires&t=${t}`),
-            fetchData(`admin/api.php?type=services&t=${t}`),
-            fetchData(`admin/api.php?type=categories&t=${t}`),
-            fetchData(`admin/api.php?type=extra_services&t=${t}`),
-            fetchData(`admin/api.php?type=testimonials&t=${t}`),
-            fetchData(`admin/api.php?type=settings&t=${t}`),
-            fetchData(`admin/api.php?type=locations&t=${t}`)
+            fetchData(`${apiBase}?type=tires&t=${t}`),
+            fetchData(`${apiBase}?type=services&t=${t}`),
+            fetchData(`${apiBase}?type=categories&t=${t}`),
+            fetchData(`${apiBase}?type=extra_services&t=${t}`),
+            fetchData(`${apiBase}?type=testimonials&t=${t}`),
+            fetchData(`${apiBase}?type=settings&t=${t}`),
+            fetchData(`${apiBase}?type=locations&t=${t}`)
         ]);
+
+        debugLog('Données reçues — tires:' + (tiresData ? tiresData.length : 'null') +
+                 ' services:' + (servicesData ? servicesData.length : 'null') +
+                 ' locations:' + (locationsData ? locationsData.length : 'null'));
         
         if (categoriesData) {
             TIRE_CATEGORIES = categoriesData;
@@ -57,7 +79,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             renderLocations([]);
         }
     } catch (error) {
-        console.error("Erreur critique inattendue:", error);
+        debugLog('Erreur critique inattendue: ' + error, true);
         renderLocations([]); // force suppression 'Chargement...'
     }
 
@@ -68,6 +90,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     initSmoothScroll();
     initPageDevisSubmission();
 });
+
 
 function renderDynamicCategories() {
     if (!Array.isArray(TIRE_CATEGORIES)) return;
