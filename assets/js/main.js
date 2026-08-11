@@ -688,19 +688,39 @@ function applySettings(settingsData) {
     
     if (settings.video_url && settings.video_url.trim() !== '') {
         const rawUrl = settings.video_url.trim();
-        const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
-        const match = rawUrl.match(ytRegex);
-        
         const section = document.getElementById('presentation-video-section');
+        const videoPlayer = document.getElementById('presentation-video-player');
+        const videoSource = document.getElementById('presentation-video-source');
+        const iframeWrapper = document.getElementById('presentation-iframe-wrapper');
         const iframe = document.getElementById('presentation-video-iframe');
-        
-        if (section && iframe) {
-            if (match && match[1]) {
-                iframe.src = `https://www.youtube.com/embed/${match[1]}?rel=0`;
-                section.style.display = 'block';
-            } else if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) {
-                iframe.src = rawUrl;
-                section.style.display = 'block';
+
+        if (section) {
+            const lowerUrl = rawUrl.toLowerCase();
+            const isUploadedFile = lowerUrl.endsWith('.mp4') || lowerUrl.endsWith('.webm') || lowerUrl.endsWith('.ogg') || lowerUrl.endsWith('.mov') || lowerUrl.includes('assets/videos/');
+            
+            if (isUploadedFile) {
+                if (videoPlayer && videoSource) {
+                    videoSource.src = rawUrl;
+                    videoSource.type = lowerUrl.endsWith('.webm') ? 'video/webm' : (lowerUrl.endsWith('.ogg') ? 'video/ogg' : 'video/mp4');
+                    videoPlayer.load();
+                    videoPlayer.style.display = 'block';
+                    if (iframeWrapper) iframeWrapper.style.display = 'none';
+                    section.style.display = 'block';
+                }
+            } else {
+                const ytRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?|shorts)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i;
+                const match = rawUrl.match(ytRegex);
+                
+                if (iframe && iframeWrapper) {
+                    if (match && match[1]) {
+                        iframe.src = `https://www.youtube.com/embed/${match[1]}?rel=0`;
+                    } else {
+                        iframe.src = rawUrl;
+                    }
+                    iframeWrapper.style.display = 'block';
+                    if (videoPlayer) videoPlayer.style.display = 'none';
+                    section.style.display = 'block';
+                }
             }
         }
     }

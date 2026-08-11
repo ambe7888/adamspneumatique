@@ -205,9 +205,17 @@ $cacheVer = file_exists($cacheVersionFile) ? trim(file_get_contents($cacheVersio
                 <div class="tag"><i class="fa-solid fa-play"></i> Découvrez notre atelier</div>
                 <h2>Vidéo de <span class="text-gold">Présentation</span></h2>
             </div>
-            <div style="max-width: 800px; margin: 0 auto; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 2px solid var(--border-color);">
-                <div style="position: relative; padding-bottom: 56.25%; height: 0;">
-                    <iframe id="presentation-video-iframe" src="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allowfullscreen></iframe>
+            <div style="max-width: 900px; margin: 0 auto; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border: 2px solid var(--border-color); background: #000;">
+                <div id="video-wrapper" style="position: relative; width: 100%;">
+                    <!-- Lecteur Vidéo HTML5 (Fichiers téléversés MP4 / WebM) -->
+                    <video id="presentation-video-player" controls playsinline controlsList="nodownload" style="width: 100%; height: auto; max-height: 520px; display: none; object-fit: contain; background: #000;">
+                        <source id="presentation-video-source" src="" type="video/mp4">
+                        Votre navigateur ne supporte pas la lecture de vidéo.
+                    </video>
+                    <!-- Cadre iFrame (Intégration liens YouTube) -->
+                    <div id="presentation-iframe-wrapper" style="position: relative; padding-bottom: 56.25%; height: 0; display: none;">
+                        <iframe id="presentation-video-iframe" src="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allowfullscreen></iframe>
+                    </div>
                 </div>
             </div>
         </div>

@@ -345,6 +345,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Liste des clés autorisées
         $allowed_keys = ['site_name', 'phone', 'whatsapp', 'address', 'map_url', 'map_embed', 'facebook_url', 'working_hours', 'video_url'];
         
+        // Traitement du téléversement direct de fichier vidéo (MP4, WebM, OGG, MOV)
+        if (isset($_FILES['video_file']) && $_FILES['video_file']['error'] === UPLOAD_ERR_OK) {
+            $tmp_name = $_FILES['video_file']['tmp_name'];
+            $name = basename($_FILES['video_file']['name']);
+            $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+            if (in_array($ext, ['mp4', 'webm', 'ogg', 'mov'])) {
+                $uploadDir = '../assets/videos/';
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir, 0755, true);
+                }
+                $uniqueName = time() . '_video.' . $ext;
+                $dest = $uploadDir . $uniqueName;
+                if (move_uploaded_file($tmp_name, $dest)) {
+                    $_POST['video_url'] = 'assets/videos/' . $uniqueName;
+                }
+            }
+        } elseif (isset($_POST['delete_video']) && $_POST['delete_video'] == '1') {
+            // Suppression de la vidéo téléversée
+            $stmt = $pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = 'video_url'");
+            $stmt->execute();
+            $old = $stmt->fetchColumn();
+            if ($old && strpos($old, 'assets/videos/') === 0 && file_exists('../' . $old)) {
+                unlink('../' . $old);
+            }
+            $_POST['video_url'] = '';
+        }
+
         foreach ($allowed_keys as $key) {
             if (isset($_POST[$key])) {
                 $value = $_POST[$key];

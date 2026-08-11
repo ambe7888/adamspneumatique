@@ -358,7 +358,7 @@ try {
             <h2><i class="fa-solid fa-cogs" style="color: var(--secondary)"></i> Informations du Site & Contacts</h2>
         </div>
         <div style="background: var(--bg-card); padding: 25px; border-radius: var(--radius); box-shadow: var(--shadow);">
-            <form action="action.php" method="post">
+            <form action="action.php" method="post" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="update_settings">
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px;">
                     <div class="form-group">
@@ -394,12 +394,42 @@ try {
                         <input type="text" name="map_embed" class="form-control" value="<?= htmlspecialchars($settings['map_embed'] ?? '') ?>" placeholder="https://www.google.com/maps/embed?pb=...">
                         <small style="color: #94a3b8;">Sur Google Maps → Partager → Intégrer une carte → copier le lien <code>src="..."</code> de l'iframe</small>
                     </div>
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                        <label>Lien Vidéo de présentation YouTube (URL, optionnel)</label>
-                        <input type="text" name="video_url" class="form-control" value="<?= htmlspecialchars($settings['video_url'] ?? '') ?>" placeholder="ex: https://www.youtube.com/watch?v=...">
+                    <div class="form-group" style="grid-column: 1 / -1; background: #0f172a; padding: 15px; border-radius: 8px; border: 1px dashed var(--primary);">
+                        <label style="color: var(--primary); font-weight: 700; font-size: 1rem;"><i class="fa-solid fa-video"></i> Vidéo de Présentation (Téléversement direct ou Lien YouTube)</label>
+                        <p style="margin: 5px 0 10px 0; font-size: 0.85rem; color: #94a3b8;">
+                            Téléversez directement un fichier vidéo MP4/WebM depuis votre appareil ou saisissez un lien YouTube.
+                        </p>
+                        
+                        <?php 
+                        $currentVideo = $settings['video_url'] ?? '';
+                        $isLocalVideo = strpos($currentVideo, 'assets/videos/') === 0;
+                        ?>
+                        
+                        <?php if ($currentVideo): ?>
+                            <div style="margin-bottom: 12px; padding: 10px; background: #1e293b; border-radius: 6px; font-size: 0.9rem;">
+                                🎬 <strong>Vidéo actuelle :</strong> <?= htmlspecialchars($currentVideo) ?><br>
+                                <?php if ($isLocalVideo): ?>
+                                    <label style="margin-top: 6px; display: inline-block; color: #ef233c; cursor: pointer;">
+                                        <input type="checkbox" name="delete_video" value="1"> <i class="fa-solid fa-trash"></i> Supprimer cette vidéo téléversée
+                                    </label>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <div>
+                                <label style="font-size: 0.85rem; color: #cbd5e1;">📁 Option A : Téléverser un fichier vidéo (MP4, WebM)</label>
+                                <input type="file" name="video_file" class="form-control" accept="video/mp4,video/webm,video/ogg,video/quicktime">
+                            </div>
+                            <div style="text-align: center; color: #64748b; font-size: 0.8rem; font-weight: bold;">— OU —</div>
+                            <div>
+                                <label style="font-size: 0.85rem; color: #cbd5e1;">🔗 Option B : Lien Vidéo YouTube / Externe</label>
+                                <input type="text" name="video_url" class="form-control" value="<?= htmlspecialchars($isLocalVideo ? '' : $currentVideo) ?>" placeholder="https://www.youtube.com/watch?v=...">
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <button type="submit" class="btn"><i class="fa-solid fa-save"></i> Enregistrer les informations</button>
+                <button type="submit" class="btn" style="margin-top: 15px;"><i class="fa-solid fa-save"></i> Enregistrer les informations</button>
             </form>
         </div>
     </div>
