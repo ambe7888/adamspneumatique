@@ -386,8 +386,13 @@ try {
                         <input type="text" name="facebook_url" class="form-control" value="<?= htmlspecialchars($settings['facebook_url'] ?? '') ?>">
                     </div>
                     <div class="form-group" style="grid-column: 1 / -1;">
-                        <label>Lien vers Google Maps (URL)</label>
+                        <label>Lien vers Google Maps (URL normale, pour les clics)</label>
                         <input type="text" name="map_url" class="form-control" value="<?= htmlspecialchars($settings['map_url'] ?? '') ?>" required>
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>🗺️ URL Google Maps Embed (pour afficher la carte — format <code>https://www.google.com/maps/embed?pb=...</code>)</label>
+                        <input type="text" name="map_embed" class="form-control" value="<?= htmlspecialchars($settings['map_embed'] ?? '') ?>" placeholder="https://www.google.com/maps/embed?pb=...">
+                        <small style="color: #94a3b8;">Sur Google Maps → Partager → Intégrer une carte → copier le lien <code>src="..."</code> de l'iframe</small>
                     </div>
                     <div class="form-group" style="grid-column: 1 / -1;">
                         <label>Lien Vidéo de présentation YouTube (URL, optionnel)</label>

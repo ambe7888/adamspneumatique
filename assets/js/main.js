@@ -26,7 +26,6 @@ document.addEventListener('DOMContentLoaded', async () => {
                     return null;
                 }
                 const text = await res.text();
-                // Vérifier si la réponse commence par du JSON valide
                 const trimmed = text.trim();
                 if (!trimmed.startsWith('[') && !trimmed.startsWith('{')) {
                     debugLog('Réponse non-JSON sur ' + url + ': ' + trimmed.substring(0, 200), true);
@@ -72,7 +71,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (testiData) renderTestimonials(testiData);
         if (settingsData) applySettings(settingsData);
         
-        // Gérer les emplacements de manière sécurisée pour enlever le CHARGEMENT...
         if (locationsData) {
             renderLocations(locationsData);
         } else {
@@ -80,7 +78,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     } catch (error) {
         debugLog('Erreur critique inattendue: ' + error, true);
-        renderLocations([]); // force suppression 'Chargement...'
+        renderLocations([]);
     }
 
     initTireFinder();
@@ -90,7 +88,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     initSmoothScroll();
     initPageDevisSubmission();
 });
-
 
 function renderDynamicCategories() {
     if (!Array.isArray(TIRE_CATEGORIES)) return;
@@ -193,7 +190,7 @@ function renderServices(services) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* 1. Tire Finder Logic                                                      */
+/* 1. Tire Finder Logic                                                       */
 /* -------------------------------------------------------------------------- */
 function initTireFinder() {
     const finderForm = document.getElementById('tire-finder-form');
@@ -224,7 +221,7 @@ function initTireFinder() {
 }
 
 /* -------------------------------------------------------------------------- */
-/* 2. Interactive Devis Calculator (Calcul en temps réel)                   */
+/* 2. Interactive Devis Calculator                                            */
 /* -------------------------------------------------------------------------- */
 window.calculateDevis = function() {
     const qtyInput = document.getElementById('calc-qty');
@@ -248,7 +245,6 @@ window.calculateDevis = function() {
 
     let total = qty * unitPrice;
 
-    // Ajouter le prix des options cochées
     const checkboxes = document.querySelectorAll('.extra-service-check');
     checkboxes.forEach(chk => {
         if (chk.checked) {
@@ -291,7 +287,7 @@ function initDevisCalculator() {
 }
 
 /* -------------------------------------------------------------------------- */
-/* 3. Catalog Render & Tab Filter (Secure Safe DOM)                           */
+/* 3. Catalog Render & Tab Filter                                              */
 /* -------------------------------------------------------------------------- */
 function initCatalogFilter() {
     renderCatalogItems(TIRE_DATABASE);
@@ -439,7 +435,7 @@ function renderCatalogItems(items) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* 4. Page Devis Form Submission (WhatsApp & Email Options)                   */
+/* 4. Page Devis Form Submission (WhatsApp & Email Options)                    */
 /* -------------------------------------------------------------------------- */
 function initPageDevisSubmission() {
     const pageForm = document.getElementById('page-devis-form');
@@ -527,7 +523,7 @@ function initPageDevisSubmission() {
 }
 
 /* -------------------------------------------------------------------------- */
-/* 5. Mobile Navigation Drawer Toggle                                         */
+/* 5. Mobile Navigation Drawer Toggle                                          */
 /* -------------------------------------------------------------------------- */
 function initMobileNav() {
     const toggleBtn = document.getElementById('mobile-toggle-btn');
@@ -538,7 +534,6 @@ function initMobileNav() {
             navLinks.classList.toggle('mobile-active');
         });
 
-        // Close drawer when clicking any link inside
         navLinks.querySelectorAll('a').forEach(link => {
             link.addEventListener('click', () => {
                 navLinks.classList.remove('mobile-active');
@@ -548,7 +543,7 @@ function initMobileNav() {
 }
 
 /* -------------------------------------------------------------------------- */
-/* 6. Smooth Scroll Helper                                                    */
+/* 6. Smooth Scroll Helper                                                     */
 /* -------------------------------------------------------------------------- */
 function initSmoothScroll() {
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -565,7 +560,7 @@ function initSmoothScroll() {
 }
 
 /* -------------------------------------------------------------------------- */
-/* 7. Dynamic Data Renderers                                                  */
+/* 7. Dynamic Data Renderers                                                   */
 /* -------------------------------------------------------------------------- */
 function renderExtraServices(services) {
     if (!Array.isArray(services)) return;
@@ -674,16 +669,21 @@ function applySettings(settingsData) {
         const hoursDiv = document.getElementById('setting-working-hours');
         if (hoursDiv) hoursDiv.textContent = settings.working_hours;
     }
-    
+
+    // Lien cliquable Google Maps (URL normale pour les <a>)
     if (settings.map_url) {
-        const embed = document.getElementById('setting-map-embed');
-        if (embed) embed.src = settings.map_url;
-        
         const addressLink = document.getElementById('setting-address-link');
         if (addressLink) addressLink.href = settings.map_url;
         
         const footerMapLink = document.getElementById('setting-footer-map-link');
         if (footerMapLink) footerMapLink.href = settings.map_url;
+    }
+
+    // Carte embed pour l'iframe (URL /maps/embed — fallback sur map_url si map_embed absent)
+    const embedSrc = settings.map_embed || settings.map_url || '';
+    if (embedSrc) {
+        const embed = document.getElementById('setting-map-embed');
+        if (embed) embed.src = embedSrc;
     }
     
     if (settings.video_url && settings.video_url.trim() !== '') {
@@ -733,19 +733,18 @@ function renderLocations(locations) {
     
     desktopBar.replaceChildren();
     
-    // Desktop layout
     locations.forEach(loc => {
         const item = document.createElement('div');
         item.className = 'location-item';
         
         let mapLink = loc.map_url ? `href="${loc.map_url}" target="_blank"` : `href="#"`;
-        let phoneLink = loc.phone ? `href="tel:${loc.phone.replace(/\s/g, '')}"` : `href="#"`;
+        let phoneHref = loc.phone ? `href="tel:${loc.phone.replace(/\s/g, '')}"` : `href="#"`;
         
         item.innerHTML = `
             <a ${mapLink} style="color: var(--text-muted); text-decoration: none;" class="location-name">
                 <i class="fa-solid fa-location-dot"></i> ${loc.name}
             </a>
-            <a ${phoneLink} style="color: var(--text-muted); text-decoration: none;">
+            <a ${phoneHref} style="color: var(--text-muted); text-decoration: none;">
                 <i class="fa-solid fa-phone"></i> ${loc.phone}
             </a>
             <span style="color: var(--accent-green);"><i class="fa-solid fa-clock"></i> ${loc.hours}</span>
@@ -753,13 +752,12 @@ function renderLocations(locations) {
         desktopBar.appendChild(item);
     });
     
-    // Mobile layout (Ticker / Scroller or just first element with a "Voir +")
     mobileBar.replaceChildren();
     
-    // We'll create a simple automatic slider if there's more than 1, otherwise just display the first one.
     if (locations.length === 1) {
         const loc = locations[0];
-        mobileBar.innerHTML = `<span style="color: var(--accent-green);">${loc.hours}</span> <span style="margin: 0 4px; color: var(--border-color);">/</span> <a href="${loc.map_url}" target="_blank" style="color: #fff;">${loc.name}</a> <span style="margin: 0 4px; color: var(--border-color);">/</span> <a href="tel:${loc.phone.replace(/\s/g, '')}" style="color: var(--primary-gold); font-weight: 700;">${loc.phone}</a>`;
+        const phoneClean = loc.phone ? loc.phone.replace(/\s/g, '') : '';
+        mobileBar.innerHTML = `<span style="color: var(--accent-green);">${loc.hours}</span> <span style="margin: 0 4px; color: var(--border-color);">/</span> <a href="${loc.map_url || '#'}" target="_blank" style="color: #fff;">${loc.name}</a> <span style="margin: 0 4px; color: var(--border-color);">/</span> <a href="tel:${phoneClean}" style="color: var(--primary-gold); font-weight: 700;">${loc.phone}</a>`;
     } else {
         const slider = document.createElement('div');
         slider.style.display = 'flex';
@@ -770,7 +768,8 @@ function renderLocations(locations) {
             const slide = document.createElement('div');
             slide.style.minWidth = '100%';
             slide.style.textAlign = 'center';
-            slide.innerHTML = `<span style="color: var(--accent-green);">${loc.hours}</span> <span style="margin: 0 4px; color: var(--border-color);">/</span> <a href="${loc.map_url}" target="_blank" style="color: #fff;">${loc.name}</a> <span style="margin: 0 4px; color: var(--border-color);">/</span> <a href="tel:${loc.phone.replace(/\s/g, '')}" style="color: var(--primary-gold); font-weight: 700;">${loc.phone}</a>`;
+            const phoneClean = loc.phone ? loc.phone.replace(/\s/g, '') : '';
+            slide.innerHTML = `<span style="color: var(--accent-green);">${loc.hours}</span> <span style="margin: 0 4px; color: var(--border-color);">/</span> <a href="${loc.map_url || '#'}" target="_blank" style="color: #fff;">${loc.name}</a> <span style="margin: 0 4px; color: var(--border-color);">/</span> <a href="tel:${phoneClean}" style="color: var(--primary-gold); font-weight: 700;">${loc.phone}</a>`;
             slider.appendChild(slide);
         });
         
@@ -781,6 +780,6 @@ function renderLocations(locations) {
         setInterval(() => {
             currentSlide = (currentSlide + 1) % locations.length;
             slider.style.transform = `translateX(-${currentSlide * 100}%)`;
-        }, 4000); // Change every 4 seconds
+        }, 4000);
     }
 }
