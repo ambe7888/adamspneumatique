@@ -9,44 +9,56 @@ let TIRE_CATEGORIES = [];
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         const t = Date.now();
-        const [tiresRes, servicesRes, categoriesRes, extraRes, testiRes, settingsRes, locationsRes] = await Promise.all([
-            fetch(`admin/api.php?type=tires&t=${t}`),
-            fetch(`admin/api.php?type=services&t=${t}`),
-            fetch(`admin/api.php?type=categories&t=${t}`),
-            fetch(`admin/api.php?type=extra_services&t=${t}`),
-            fetch(`admin/api.php?type=testimonials&t=${t}`),
-            fetch(`admin/api.php?type=settings&t=${t}`),
-            fetch(`admin/api.php?type=locations&t=${t}`)
+        
+        const fetchData = async (url) => {
+            try {
+                const res = await fetch(url);
+                if (!res.ok) return null;
+                const text = await res.text();
+                try {
+                    return JSON.parse(text);
+                } catch (e) {
+                    console.error("Erreur JSON sur", url, text);
+                    return null;
+                }
+            } catch (err) {
+                console.error("Erreur Fetch sur", url, err);
+                return null;
+            }
+        };
+
+        const [tiresData, servicesData, categoriesData, extraData, testiData, settingsData, locationsData] = await Promise.all([
+            fetchData(`admin/api.php?type=tires&t=${t}`),
+            fetchData(`admin/api.php?type=services&t=${t}`),
+            fetchData(`admin/api.php?type=categories&t=${t}`),
+            fetchData(`admin/api.php?type=extra_services&t=${t}`),
+            fetchData(`admin/api.php?type=testimonials&t=${t}`),
+            fetchData(`admin/api.php?type=settings&t=${t}`),
+            fetchData(`admin/api.php?type=locations&t=${t}`)
         ]);
         
-        if (categoriesRes.ok) {
-            TIRE_CATEGORIES = await categoriesRes.json();
+        if (categoriesData) {
+            TIRE_CATEGORIES = categoriesData;
             renderDynamicCategories();
         }
-        if (tiresRes.ok) TIRE_DATABASE = await tiresRes.json();
-        if (servicesRes.ok) {
-            const servicesData = await servicesRes.json();
-            renderServices(servicesData);
-        }
-        if (extraRes.ok) {
-            const extraData = await extraRes.json();
+        if (tiresData) TIRE_DATABASE = tiresData;
+        if (servicesData) renderServices(servicesData);
+        if (extraData) {
             window.EXTRA_SERVICES = extraData;
             renderExtraServices(extraData);
         }
-        if (testiRes.ok) {
-            const testiData = await testiRes.json();
-            renderTestimonials(testiData);
-        }
-        if (settingsRes.ok) {
-            const settingsData = await settingsRes.json();
-            applySettings(settingsData);
-        }
-        if (locationsRes.ok) {
-            const locationsData = await locationsRes.json();
+        if (testiData) renderTestimonials(testiData);
+        if (settingsData) applySettings(settingsData);
+        
+        // Gérer les emplacements de manière sécurisée pour enlever le CHARGEMENT...
+        if (locationsData) {
             renderLocations(locationsData);
+        } else {
+            renderLocations([]);
         }
     } catch (error) {
-        console.error("Erreur lors du chargement des données:", error);
+        console.error("Erreur critique inattendue:", error);
+        renderLocations([]); // force suppression 'Chargement...'
     }
 
     initTireFinder();

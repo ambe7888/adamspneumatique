@@ -328,7 +328,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // -- SETTINGS --
     if ($action === 'update_settings') {
         // Liste des clés autorisées
-        $allowed_keys = ['site_name', 'phone', 'whatsapp', 'address', 'map_url', 'facebook_url', 'working_hours'];
+        $allowed_keys = ['site_name', 'phone', 'whatsapp', 'address', 'map_url', 'facebook_url', 'working_hours', 'video_url'];
         
         foreach ($allowed_keys as $key) {
             if (isset($_POST[$key])) {
