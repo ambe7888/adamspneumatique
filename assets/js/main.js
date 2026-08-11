@@ -780,7 +780,7 @@ function renderLocations(locations) {
         let currentSlide = 0;
         setInterval(() => {
             currentSlide = (currentSlide + 1) % locations.length;
-            slider.style.transform = \`translateX(-\${currentSlide * 100}%)\`;
+            slider.style.transform = `translateX(-${currentSlide * 100}%)`;
         }, 4000); // Change every 4 seconds
     }
 }
