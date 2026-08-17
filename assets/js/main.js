@@ -93,6 +93,26 @@ document.addEventListener('DOMContentLoaded', async () => {
     initMobileNav();
     initSmoothScroll();
     initPageDevisSubmission();
+
+    // Check if redirected from catalogue with order params
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderParam = urlParams.get('order');
+    const priceParam = urlParams.get('price');
+    if (orderParam) {
+        const detailsInput = document.getElementById('page-calc-details');
+        if (detailsInput) {
+            detailsInput.value = decodeURIComponent(orderParam);
+            if (priceParam) {
+                detailsInput.setAttribute('data-exact-price', decodeURIComponent(priceParam));
+            }
+        }
+        const qtyInput = document.getElementById('calc-qty');
+        if (qtyInput) qtyInput.dispatchEvent(new Event('input'));
+        const devisSec = document.getElementById('devis');
+        if (devisSec) {
+            setTimeout(() => devisSec.scrollIntoView({ behavior: 'smooth' }), 300);
+        }
+    }
 });
 
 function renderDynamicCategories() {
@@ -333,7 +353,10 @@ function renderCatalogItems(items) {
         return;
     }
 
-    items.forEach(tire => {
+    // On home page, limit to 6 items preview
+    const previewItems = items.slice(0, 6);
+
+    previewItems.forEach(tire => {
         const itemCard = document.createElement('div');
         itemCard.className = 'tire-item';
 
@@ -447,15 +470,15 @@ function renderRims(rims) {
     
     gridContainer.replaceChildren();
 
-    // Filtrer les jantes cachées si besoin, ou juste toutes les afficher si is_hidden=0
-    const visibleRims = rims.filter(r => parseInt(r.is_hidden || 0) === 0);
+    // Filtrer les jantes cachées et limiter l'aperçu à 3
+    const visibleRims = rims.filter(r => parseInt(r.is_hidden || 0) === 0).slice(0, 3);
 
     visibleRims.forEach(rim => {
         const itemCard = document.createElement('div');
-        itemCard.className = 'catalog-item';
+        itemCard.className = 'tire-item';
 
         const itemHeader = document.createElement('div');
-        itemHeader.className = 'tire-header';
+        itemHeader.className = 'tire-item-header';
 
         const brandTag = document.createElement('span');
         brandTag.className = 'tire-brand-tag';
@@ -544,14 +567,15 @@ function renderAccessories(accessories) {
     
     gridContainer.replaceChildren();
 
-    const visibleAccessories = accessories.filter(a => parseInt(a.is_hidden || 0) === 0);
+    // Filtrer les accessoires cachés et limiter l'aperçu à 3
+    const visibleAccessories = accessories.filter(a => parseInt(a.is_hidden || 0) === 0).slice(0, 3);
 
     visibleAccessories.forEach(acc => {
         const itemCard = document.createElement('div');
-        itemCard.className = 'catalog-item';
+        itemCard.className = 'tire-item';
 
         const itemHeader = document.createElement('div');
-        itemHeader.className = 'tire-header';
+        itemHeader.className = 'tire-item-header';
 
         const brandTag = document.createElement('span');
         brandTag.className = 'tire-brand-tag';

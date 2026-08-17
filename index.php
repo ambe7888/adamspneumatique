@@ -85,7 +85,7 @@ $cacheVer = file_exists($cacheVersionFile) ? trim(file_get_contents($cacheVersio
             <nav class="nav-links" id="nav-links-menu">
                 <a href="#accueil" class="active">Accueil</a>
                 <a href="#services">Nos Services</a>
-                <a href="#catalogue">Pneus & Tarifs</a>
+                <a href="catalogue.php">Catalogue Complet</a>
                 <a href="#contact">Contact & Accès</a>
             </nav>
 
@@ -236,13 +236,13 @@ $cacheVer = file_exists($cacheVersionFile) ? trim(file_get_contents($cacheVersio
         </div>
     </section>
 
-    <!-- Tire Catalog Section -->
+    <!-- Tire Catalog Preview Section -->
     <section class="section-padding" id="catalogue" style="background: var(--bg-card);">
         <div class="container">
             <div class="section-header">
-                <div class="tag"><i class="fa-solid fa-boxes-stacked"></i> Catalogue Spécial</div>
+                <div class="tag"><i class="fa-solid fa-boxes-stacked"></i> Aperçu Pneus</div>
                 <h2>Sélection de Pneus <span class="text-gold">En Stock</span></h2>
-                <p>Découvrez un aperçu de nos pneus les plus recherchés. Pour toute dimension spécifique, contactez-nous directement.</p>
+                <p>Découvrez un aperçu de nos pneus les plus demandés. Consultez l'ensemble de nos dimensions dans le catalogue complet.</p>
             </div>
 
             <!-- Filter Tabs -->
@@ -253,6 +253,54 @@ $cacheVer = file_exists($cacheVersionFile) ? trim(file_get_contents($cacheVersio
             <!-- Dynamic Grid Target -->
             <div class="catalog-grid" id="catalog-grid-container">
                 <!-- JS inserted items -->
+            </div>
+
+            <div style="text-align: center; margin-top: 35px;">
+                <a href="catalogue.php?type=tires" class="btn btn-secondary" style="padding: 12px 28px; font-size: 0.95rem; border: 1px solid var(--border-gold); display: inline-flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-boxes-stacked text-gold"></i> Voir tous les pneus disponibles <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Rims Catalog Preview Section -->
+    <section class="section-padding" id="catalogue-jantes">
+        <div class="container">
+            <div class="section-header">
+                <div class="tag"><i class="fa-solid fa-life-ring"></i> Jantes & Enjoliveurs</div>
+                <h2>Notre Gamme de <span class="text-gold">Jantes</span></h2>
+                <p>Alliez élégance et robustesse avec notre collection de jantes en aluminium et acier pour tous types de véhicules.</p>
+            </div>
+            
+            <div class="catalog-grid" id="rims-grid-container">
+                <!-- JS inserted rims -->
+            </div>
+
+            <div style="text-align: center; margin-top: 35px;">
+                <a href="catalogue.php?type=rims" class="btn btn-secondary" style="padding: 12px 28px; font-size: 0.95rem; border: 1px solid var(--border-gold); display: inline-flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-life-ring text-gold"></i> Découvrir toutes nos jantes <i class="fa-solid fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Accessories Catalog Preview Section -->
+    <section class="section-padding" id="catalogue-accessoires" style="background: var(--bg-card);">
+        <div class="container">
+            <div class="section-header">
+                <div class="tag"><i class="fa-solid fa-car-battery"></i> Équipements Auto</div>
+                <h2>Accessoires & <span class="text-gold">Batteries</span></h2>
+                <p>Batteries haute performance, lubrifiants et équipements d'entretien indispensables pour votre tranquillité.</p>
+            </div>
+            
+            <div class="catalog-grid" id="accessories-grid-container">
+                <!-- JS inserted accessories -->
+            </div>
+
+            <div style="text-align: center; margin-top: 35px;">
+                <a href="catalogue.php?type=accessories" class="btn btn-secondary" style="padding: 12px 28px; font-size: 0.95rem; border: 1px solid var(--border-gold); display: inline-flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-car-battery text-gold"></i> Voir tous les accessoires auto <i class="fa-solid fa-arrow-right"></i>
+                </a>
             </div>
         </div>
     </section>
