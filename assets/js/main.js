@@ -44,25 +44,31 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
 
         const apiBase = BASE_URL + 'admin/api.php';
-        const [tiresData, servicesData, categoriesData, extraData, testiData, settingsData, locationsData] = await Promise.all([
+        const [tiresData, servicesData, categoriesData, extraData, testiData, settingsData, locationsData, rimsData, accessoriesData] = await Promise.all([
             fetchData(`${apiBase}?type=tires&t=${t}`),
             fetchData(`${apiBase}?type=services&t=${t}`),
             fetchData(`${apiBase}?type=categories&t=${t}`),
             fetchData(`${apiBase}?type=extra_services&t=${t}`),
             fetchData(`${apiBase}?type=testimonials&t=${t}`),
             fetchData(`${apiBase}?type=settings&t=${t}`),
-            fetchData(`${apiBase}?type=locations&t=${t}`)
+            fetchData(`${apiBase}?type=locations&t=${t}`),
+            fetchData(`${apiBase}?type=rims&t=${t}`),
+            fetchData(`${apiBase}?type=accessories&t=${t}`)
         ]);
 
         debugLog('Données reçues — tires:' + (tiresData ? tiresData.length : 'null') +
                  ' services:' + (servicesData ? servicesData.length : 'null') +
-                 ' locations:' + (locationsData ? locationsData.length : 'null'));
+                 ' locations:' + (locationsData ? locationsData.length : 'null') +
+                 ' rims:' + (rimsData ? rimsData.length : 'null') +
+                 ' accessories:' + (accessoriesData ? accessoriesData.length : 'null'));
         
         if (categoriesData) {
             TIRE_CATEGORIES = categoriesData;
             renderDynamicCategories();
         }
         if (tiresData) TIRE_DATABASE = tiresData;
+        if (rimsData) renderRims(rimsData);
+        if (accessoriesData) renderAccessories(accessoriesData);
         if (servicesData) renderServices(servicesData);
         if (extraData) {
             window.EXTRA_SERVICES = extraData;
@@ -430,6 +436,192 @@ function renderCatalogItems(items) {
 
         itemCard.appendChild(priceRow);
 
+        gridContainer.appendChild(itemCard);
+    });
+}
+
+function renderRims(rims) {
+    if (!Array.isArray(rims)) return;
+    const gridContainer = document.getElementById('rims-grid-container');
+    if (!gridContainer) return;
+    
+    gridContainer.replaceChildren();
+
+    // Filtrer les jantes cachées si besoin, ou juste toutes les afficher si is_hidden=0
+    const visibleRims = rims.filter(r => parseInt(r.is_hidden || 0) === 0);
+
+    visibleRims.forEach(rim => {
+        const itemCard = document.createElement('div');
+        itemCard.className = 'catalog-item';
+
+        const itemHeader = document.createElement('div');
+        itemHeader.className = 'tire-header';
+
+        const brandTag = document.createElement('span');
+        brandTag.className = 'tire-brand-tag';
+        brandTag.textContent = rim.brand;
+        itemHeader.appendChild(brandTag);
+        itemCard.appendChild(itemHeader);
+
+        if (rim.image) {
+            const tireImgWrapper = document.createElement('div');
+            tireImgWrapper.style.textAlign = 'center';
+            tireImgWrapper.style.margin = '15px 0';
+            const tireImg = document.createElement('img');
+            tireImg.src = rim.image;
+            tireImg.alt = `${rim.brand} ${rim.model}`;
+            tireImg.style.maxWidth = '100%';
+            tireImg.style.height = 'auto';
+            tireImg.style.maxHeight = '150px';
+            tireImg.style.objectFit = 'contain';
+            tireImg.style.borderRadius = '8px';
+            tireImgWrapper.appendChild(tireImg);
+            itemCard.appendChild(tireImgWrapper);
+        }
+
+        const title = document.createElement('h4');
+        title.textContent = `${rim.model}`;
+        itemCard.appendChild(title);
+
+        const specs = document.createElement('div');
+        specs.className = 'tire-specs';
+        const spec1 = document.createElement('span');
+        spec1.textContent = `Diam: ${rim.diameter} | Entraxe: ${rim.bolt_pattern} | ${rim.type}`;
+        specs.appendChild(spec1);
+        itemCard.appendChild(specs);
+
+        const desc = document.createElement('p');
+        desc.style.fontSize = '0.85rem';
+        desc.style.color = '#94a3b8';
+        desc.style.marginBottom = '15px';
+        desc.textContent = rim.description;
+        itemCard.appendChild(desc);
+
+        const priceRow = document.createElement('div');
+        priceRow.className = 'tire-price';
+
+        const priceVal = document.createElement('div');
+        priceVal.className = 'price-val';
+        priceVal.textContent = `${parseInt(rim.price).toLocaleString('fr-FR')} FCFA`;
+
+        const orderBtn = document.createElement('a');
+        orderBtn.className = 'btn btn-primary';
+        orderBtn.style.padding = '8px 14px';
+        orderBtn.style.fontSize = '0.8rem';
+        orderBtn.href = '#devis';
+
+        const iconCalc = document.createElement('i');
+        iconCalc.className = 'fa-solid fa-calculator';
+        iconCalc.style.marginRight = '6px';
+        orderBtn.appendChild(iconCalc);
+        orderBtn.appendChild(document.createTextNode('Commander'));
+
+        orderBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const detailsInput = document.getElementById('page-calc-details');
+            if (detailsInput) {
+                detailsInput.value = `Jante ${rim.brand} ${rim.model} - ${rim.diameter}`;
+                detailsInput.setAttribute('data-exact-price', rim.price);
+            }
+            
+            const devisSec = document.getElementById('devis');
+            if (devisSec) {
+                devisSec.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        priceRow.appendChild(priceVal);
+        priceRow.appendChild(orderBtn);
+        itemCard.appendChild(priceRow);
+        gridContainer.appendChild(itemCard);
+    });
+}
+
+function renderAccessories(accessories) {
+    if (!Array.isArray(accessories)) return;
+    const gridContainer = document.getElementById('accessories-grid-container');
+    if (!gridContainer) return;
+    
+    gridContainer.replaceChildren();
+
+    const visibleAccessories = accessories.filter(a => parseInt(a.is_hidden || 0) === 0);
+
+    visibleAccessories.forEach(acc => {
+        const itemCard = document.createElement('div');
+        itemCard.className = 'catalog-item';
+
+        const itemHeader = document.createElement('div');
+        itemHeader.className = 'tire-header';
+
+        const brandTag = document.createElement('span');
+        brandTag.className = 'tire-brand-tag';
+        brandTag.textContent = acc.category;
+        itemHeader.appendChild(brandTag);
+        itemCard.appendChild(itemHeader);
+
+        if (acc.image) {
+            const tireImgWrapper = document.createElement('div');
+            tireImgWrapper.style.textAlign = 'center';
+            tireImgWrapper.style.margin = '15px 0';
+            const tireImg = document.createElement('img');
+            tireImg.src = acc.image;
+            tireImg.alt = `${acc.name}`;
+            tireImg.style.maxWidth = '100%';
+            tireImg.style.height = 'auto';
+            tireImg.style.maxHeight = '150px';
+            tireImg.style.objectFit = 'contain';
+            tireImg.style.borderRadius = '8px';
+            tireImgWrapper.appendChild(tireImg);
+            itemCard.appendChild(tireImgWrapper);
+        }
+
+        const title = document.createElement('h4');
+        title.textContent = acc.name;
+        itemCard.appendChild(title);
+
+        const desc = document.createElement('p');
+        desc.style.fontSize = '0.85rem';
+        desc.style.color = '#94a3b8';
+        desc.style.marginBottom = '15px';
+        desc.textContent = acc.description;
+        itemCard.appendChild(desc);
+
+        const priceRow = document.createElement('div');
+        priceRow.className = 'tire-price';
+
+        const priceVal = document.createElement('div');
+        priceVal.className = 'price-val';
+        priceVal.textContent = `${parseInt(acc.price).toLocaleString('fr-FR')} FCFA`;
+
+        const orderBtn = document.createElement('a');
+        orderBtn.className = 'btn btn-primary';
+        orderBtn.style.padding = '8px 14px';
+        orderBtn.style.fontSize = '0.8rem';
+        orderBtn.href = '#devis';
+
+        const iconCalc = document.createElement('i');
+        iconCalc.className = 'fa-solid fa-calculator';
+        iconCalc.style.marginRight = '6px';
+        orderBtn.appendChild(iconCalc);
+        orderBtn.appendChild(document.createTextNode('Commander'));
+
+        orderBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const detailsInput = document.getElementById('page-calc-details');
+            if (detailsInput) {
+                detailsInput.value = `Accessoire : ${acc.name}`;
+                detailsInput.setAttribute('data-exact-price', acc.price);
+            }
+            
+            const devisSec = document.getElementById('devis');
+            if (devisSec) {
+                devisSec.scrollIntoView({ behavior: 'smooth' });
+            }
+        });
+
+        priceRow.appendChild(priceVal);
+        priceRow.appendChild(orderBtn);
+        itemCard.appendChild(priceRow);
         gridContainer.appendChild(itemCard);
     });
 }

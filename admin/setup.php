@@ -42,6 +42,33 @@ try {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
     $pdo->exec($sql_tires);
 
+    // Table pour les jantes
+    $sql_rims = "CREATE TABLE IF NOT EXISTS rims (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        brand VARCHAR(100) NOT NULL,
+        model VARCHAR(100) NOT NULL,
+        diameter VARCHAR(10) NOT NULL,
+        bolt_pattern VARCHAR(50) NOT NULL,
+        type VARCHAR(50) NOT NULL,
+        price INT NOT NULL,
+        description TEXT,
+        image VARCHAR(255),
+        is_hidden TINYINT(1) DEFAULT 0
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+    $pdo->exec($sql_rims);
+
+    // Table pour les accessoires
+    $sql_accessories = "CREATE TABLE IF NOT EXISTS accessories (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        category VARCHAR(100) NOT NULL,
+        price INT NOT NULL,
+        description TEXT,
+        image VARCHAR(255),
+        is_hidden TINYINT(1) DEFAULT 0
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
+    $pdo->exec($sql_accessories);
+
     // Table pour les services complémentaires (options devis)
     $sql_extra_services = "CREATE TABLE IF NOT EXISTS extra_services (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -138,6 +165,24 @@ try {
         ('Amadou Traoré', 'Conducteur VTC Abidjan', 'Pneus de très bonne qualité et prix très honnêtes par rapport au marché. Accueil chaleureux et travail très rapide. Je recommande vivement !', 5),
         ('Sarah Bamba', 'Cliente de Cocody', 'Je suis venue pour un test de batterie et un parallélisme. Équipe professionnelle et de bon conseil. Ouvert le dimanche c\'est vraiment un gros plus !', 5)";
         $pdo->exec($init_testi);
+    }
+    
+    // Initialisation des jantes
+    $stmt = $pdo->query("SELECT COUNT(*) FROM rims");
+    if ($stmt->fetchColumn() == 0) {
+        $init_rims = "INSERT INTO rims (brand, model, diameter, bolt_pattern, type, price, description) VALUES 
+        ('BBS', 'Super RS', '17\"', '4x100', 'Alu', 150000, 'Jante aluminium haut de gamme.'),
+        ('OZ Racing', 'Superturismo', '16\"', '5x114.3', 'Alu', 120000, 'Design sportif et léger.')";
+        $pdo->exec($init_rims);
+    }
+
+    // Initialisation des accessoires
+    $stmt = $pdo->query("SELECT COUNT(*) FROM accessories");
+    if ($stmt->fetchColumn() == 0) {
+        $init_acc = "INSERT INTO accessories (name, category, price, description) VALUES 
+        ('Batterie Varta 70Ah', 'Batterie', 65000, 'Batterie haute performance garantie 1 an.'),
+        ('Huile Moteur Total Quartz 9000', 'Lubrifiant', 25000, 'Bidon 5L, 5W-40 100% Synthèse.')";
+        $pdo->exec($init_acc);
     }
 
     // Initialisation des paramètres globaux

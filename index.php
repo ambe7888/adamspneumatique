@@ -474,3 +474,4 @@ $cacheVer = file_exists($cacheVersionFile) ? trim(file_get_contents($cacheVersio
     <script src="assets/js/main.js?v=<?= htmlspecialchars($cacheVer) ?>"></script>
 </body>
 </html>
+

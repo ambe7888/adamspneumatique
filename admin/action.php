@@ -242,6 +242,180 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // -- JANTES --
+    if ($action === 'add_rim') {
+        $brand = $_POST['brand'];
+        $model = $_POST['model'];
+        $diameter = $_POST['diameter'];
+        $bolt_pattern = $_POST['bolt_pattern'];
+        $type = $_POST['type'];
+        $price = (int)$_POST['price'];
+        $description = $_POST['description'];
+        
+        $imagePath = '';
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $tmp_name = $_FILES['image']['tmp_name'];
+            $name = basename($_FILES['image']['name']);
+            $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                $uniqueName = time() . '_rim_' . $name;
+                $dest = '../assets/images/' . $uniqueName;
+                if (move_uploaded_file($tmp_name, $dest)) {
+                    $imagePath = 'assets/images/' . $uniqueName;
+                }
+            }
+        }
+
+        $stmt = $pdo->prepare("INSERT INTO rims (brand, model, diameter, bolt_pattern, type, price, description, image) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$brand, $model, $diameter, $bolt_pattern, $type, $price, $description, $imagePath]);
+        
+        header("Location: index.php");
+        exit;
+    }
+
+    if ($action === 'edit_rim') {
+        $id = (int)$_POST['id'];
+        $brand = $_POST['brand'];
+        $model = $_POST['model'];
+        $diameter = $_POST['diameter'];
+        $bolt_pattern = $_POST['bolt_pattern'];
+        $type = $_POST['type'];
+        $price = (int)$_POST['price'];
+        $description = $_POST['description'];
+
+        $imagePath = $_POST['existing_image'] ?? '';
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $tmp_name = $_FILES['image']['tmp_name'];
+            $name = basename($_FILES['image']['name']);
+            $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                $uniqueName = time() . '_rim_' . $name;
+                $dest = '../assets/images/' . $uniqueName;
+                if (move_uploaded_file($tmp_name, $dest)) {
+                    if ($imagePath && file_exists('../' . $imagePath)) unlink('../' . $imagePath);
+                    $imagePath = 'assets/images/' . $uniqueName;
+                }
+            }
+        }
+
+        $stmt = $pdo->prepare("UPDATE rims SET brand=?, model=?, diameter=?, bolt_pattern=?, type=?, price=?, description=?, image=? WHERE id=?");
+        $stmt->execute([$brand, $model, $diameter, $bolt_pattern, $type, $price, $description, $imagePath, $id]);
+        
+        header("Location: index.php");
+        exit;
+    }
+
+    if ($action === 'delete_rim') {
+        $id = $_POST['id'];
+        
+        $stmt = $pdo->prepare("SELECT image FROM rims WHERE id = ?");
+        $stmt->execute([$id]);
+        $res = $stmt->fetch();
+        if ($res && $res['image']) {
+            $imgPath = '../' . $res['image'];
+            if (file_exists($imgPath)) unlink($imgPath);
+        }
+
+        $stmt = $pdo->prepare("DELETE FROM rims WHERE id = ?");
+        $stmt->execute([$id]);
+        
+        header("Location: index.php");
+        exit;
+    }
+
+    if ($action === 'toggle_hide_rim') {
+        $id = (int)$_POST['id'];
+        $state = (int)$_POST['state'];
+        $stmt = $pdo->prepare("UPDATE rims SET is_hidden = ? WHERE id = ?");
+        $stmt->execute([$state, $id]);
+        header("Location: index.php");
+        exit;
+    }
+
+    // -- ACCESSOIRES --
+    if ($action === 'add_accessory') {
+        $name_acc = $_POST['name'];
+        $category_acc = $_POST['category'];
+        $price = (int)$_POST['price'];
+        $description = $_POST['description'];
+        
+        $imagePath = '';
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $tmp_name = $_FILES['image']['tmp_name'];
+            $name_file = basename($_FILES['image']['name']);
+            $ext = strtolower(pathinfo($name_file, PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                $uniqueName = time() . '_acc_' . $name_file;
+                $dest = '../assets/images/' . $uniqueName;
+                if (move_uploaded_file($tmp_name, $dest)) {
+                    $imagePath = 'assets/images/' . $uniqueName;
+                }
+            }
+        }
+
+        $stmt = $pdo->prepare("INSERT INTO accessories (name, category, price, description, image) VALUES (?, ?, ?, ?, ?)");
+        $stmt->execute([$name_acc, $category_acc, $price, $description, $imagePath]);
+        
+        header("Location: index.php");
+        exit;
+    }
+
+    if ($action === 'edit_accessory') {
+        $id = (int)$_POST['id'];
+        $name_acc = $_POST['name'];
+        $category_acc = $_POST['category'];
+        $price = (int)$_POST['price'];
+        $description = $_POST['description'];
+
+        $imagePath = $_POST['existing_image'] ?? '';
+        if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+            $tmp_name = $_FILES['image']['tmp_name'];
+            $name_file = basename($_FILES['image']['name']);
+            $ext = strtolower(pathinfo($name_file, PATHINFO_EXTENSION));
+            if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'])) {
+                $uniqueName = time() . '_acc_' . $name_file;
+                $dest = '../assets/images/' . $uniqueName;
+                if (move_uploaded_file($tmp_name, $dest)) {
+                    if ($imagePath && file_exists('../' . $imagePath)) unlink('../' . $imagePath);
+                    $imagePath = 'assets/images/' . $uniqueName;
+                }
+            }
+        }
+
+        $stmt = $pdo->prepare("UPDATE accessories SET name=?, category=?, price=?, description=?, image=? WHERE id=?");
+        $stmt->execute([$name_acc, $category_acc, $price, $description, $imagePath, $id]);
+        
+        header("Location: index.php");
+        exit;
+    }
+
+    if ($action === 'delete_accessory') {
+        $id = $_POST['id'];
+        
+        $stmt = $pdo->prepare("SELECT image FROM accessories WHERE id = ?");
+        $stmt->execute([$id]);
+        $res = $stmt->fetch();
+        if ($res && $res['image']) {
+            $imgPath = '../' . $res['image'];
+            if (file_exists($imgPath)) unlink($imgPath);
+        }
+
+        $stmt = $pdo->prepare("DELETE FROM accessories WHERE id = ?");
+        $stmt->execute([$id]);
+        
+        header("Location: index.php");
+        exit;
+    }
+
+    if ($action === 'toggle_hide_accessory') {
+        $id = (int)$_POST['id'];
+        $state = (int)$_POST['state'];
+        $stmt = $pdo->prepare("UPDATE accessories SET is_hidden = ? WHERE id = ?");
+        $stmt->execute([$state, $id]);
+        header("Location: index.php");
+        exit;
+    }
+
     // -- EXTRA SERVICES (OPTIONS DE DEVIS) --
     if ($action === 'add_extra_service') {
         $title = $_POST['title'];

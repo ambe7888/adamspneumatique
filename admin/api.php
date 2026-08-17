@@ -47,6 +47,12 @@ try {
     } elseif ($type === 'locations') {
         $stmt = $pdo->query("SELECT * FROM locations");
         echo json_encode($stmt->fetchAll());
+    } elseif ($type === 'rims') {
+        $stmt = $pdo->query("SELECT * FROM rims WHERE is_hidden = 0 OR is_hidden IS NULL");
+        echo json_encode($stmt->fetchAll());
+    } elseif ($type === 'accessories') {
+        $stmt = $pdo->query("SELECT * FROM accessories WHERE is_hidden = 0 OR is_hidden IS NULL");
+        echo json_encode($stmt->fetchAll());
     } else {
         echo json_encode(['error' => 'Type non spécifié']);
     }

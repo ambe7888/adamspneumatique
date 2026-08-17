@@ -65,6 +65,16 @@ $locations = [];
 try {
     $locations = $pdo->query("SELECT * FROM locations")->fetchAll();
 } catch(Exception $e) {}
+
+$rims = [];
+try {
+    $rims = $pdo->query("SELECT * FROM rims")->fetchAll();
+} catch(Exception $e) {}
+
+$accessories = [];
+try {
+    $accessories = $pdo->query("SELECT * FROM accessories")->fetchAll();
+} catch(Exception $e) {}
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -218,6 +228,104 @@ try {
                         <input type="hidden" name="action" value="delete_tire">
                         <input type="hidden" name="id" value="<?= $t['id'] ?>">
                         <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer ce pneu ?')">Suppr.</button>
+                    </form>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </table>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 40px 0;">
+
+        <!-- Gestion des Jantes -->
+        <div class="section-header">
+            <h2><i class="fa-solid fa-life-ring" style="color: var(--secondary)"></i> Gestion des Jantes</h2>
+            <button class="btn" onclick="document.getElementById('modalRim').style.display='block'"><i class="fa-solid fa-plus"></i> Nouvelle Jante</button>
+        </div>
+        <div class="table-responsive">
+        <table>
+            <tr>
+                <th>Statut</th>
+                <th>Image</th>
+                <th>Marque & Modèle</th>
+                <th>Spécifications</th>
+                <th>Prix</th>
+                <th>Actions</th>
+            </tr>
+            <?php foreach($rims as $r): 
+                $isHiddenRim = isset($r['is_hidden']) && $r['is_hidden'] == 1;
+            ?>
+            <tr class="<?= $isHiddenRim ? 'row-hidden' : '' ?>">
+                <td>
+                    <form action="action.php" method="post" style="display:inline;">
+                        <input type="hidden" name="action" value="toggle_hide_rim">
+                        <input type="hidden" name="id" value="<?= $r['id'] ?>">
+                        <input type="hidden" name="state" value="<?= $isHiddenRim ? 0 : 1 ?>">
+                        <button type="submit" class="btn btn-sm <?= $isHiddenRim ? 'btn-info' : 'btn-secondary' ?>">
+                            <?= $isHiddenRim ? 'Afficher' : 'Masquer' ?>
+                        </button>
+                    </form>
+                </td>
+                <td><?php if(!empty($r['image'])): ?><img src="../<?= $r['image'] ?>" alt="" width="50"><?php endif; ?></td>
+                <td><?= htmlspecialchars($r['brand'] . ' - ' . $r['model']) ?></td>
+                <td><?= htmlspecialchars($r['diameter'] . ' / ' . $r['bolt_pattern'] . ' / ' . $r['type']) ?></td>
+                <td><?= htmlspecialchars($r['price']) ?> FCFA</td>
+                <td class="action-group">
+                    <button class="btn btn-sm btn-info" onclick="openEditRim(<?= $r['id'] ?>, '<?= htmlspecialchars(addslashes($r['brand'])) ?>', '<?= htmlspecialchars(addslashes($r['model'])) ?>', '<?= $r['diameter'] ?>', '<?= htmlspecialchars(addslashes($r['bolt_pattern'])) ?>', '<?= htmlspecialchars(addslashes($r['type'])) ?>', <?= $r['price'] ?>, '<?= htmlspecialchars(addslashes($r['description'])) ?>', '<?= $r['image'] ?>')">Modifier</button>
+
+                    <form action="action.php" method="post">
+                        <input type="hidden" name="action" value="delete_rim">
+                        <input type="hidden" name="id" value="<?= $r['id'] ?>">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cette jante ?')">Suppr.</button>
+                    </form>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+        </table>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 40px 0;">
+
+        <!-- Gestion des Accessoires -->
+        <div class="section-header">
+            <h2><i class="fa-solid fa-car-battery" style="color: var(--secondary)"></i> Gestion des Accessoires</h2>
+            <button class="btn" onclick="document.getElementById('modalAccessory').style.display='block'"><i class="fa-solid fa-plus"></i> Nouvel Accessoire</button>
+        </div>
+        <div class="table-responsive">
+        <table>
+            <tr>
+                <th>Statut</th>
+                <th>Image</th>
+                <th>Nom</th>
+                <th>Catégorie</th>
+                <th>Prix</th>
+                <th>Actions</th>
+            </tr>
+            <?php foreach($accessories as $a): 
+                $isHiddenAcc = isset($a['is_hidden']) && $a['is_hidden'] == 1;
+            ?>
+            <tr class="<?= $isHiddenAcc ? 'row-hidden' : '' ?>">
+                <td>
+                    <form action="action.php" method="post" style="display:inline;">
+                        <input type="hidden" name="action" value="toggle_hide_accessory">
+                        <input type="hidden" name="id" value="<?= $a['id'] ?>">
+                        <input type="hidden" name="state" value="<?= $isHiddenAcc ? 0 : 1 ?>">
+                        <button type="submit" class="btn btn-sm <?= $isHiddenAcc ? 'btn-info' : 'btn-secondary' ?>">
+                            <?= $isHiddenAcc ? 'Afficher' : 'Masquer' ?>
+                        </button>
+                    </form>
+                </td>
+                <td><?php if(!empty($a['image'])): ?><img src="../<?= $a['image'] ?>" alt="" width="50"><?php endif; ?></td>
+                <td><?= htmlspecialchars($a['name']) ?></td>
+                <td><?= htmlspecialchars($a['category']) ?></td>
+                <td><?= htmlspecialchars($a['price']) ?> FCFA</td>
+                <td class="action-group">
+                    <button class="btn btn-sm btn-info" onclick="openEditAccessory(<?= $a['id'] ?>, '<?= htmlspecialchars(addslashes($a['name'])) ?>', '<?= htmlspecialchars(addslashes($a['category'])) ?>', <?= $a['price'] ?>, '<?= htmlspecialchars(addslashes($a['description'])) ?>', '<?= $a['image'] ?>')">Modifier</button>
+
+                    <form action="action.php" method="post">
+                        <input type="hidden" name="action" value="delete_accessory">
+                        <input type="hidden" name="id" value="<?= $a['id'] ?>">
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cet accessoire ?')">Suppr.</button>
                     </form>
                 </td>
             </tr>
@@ -432,6 +540,178 @@ try {
                 <button type="submit" class="btn" style="margin-top: 15px;"><i class="fa-solid fa-save"></i> Enregistrer les informations</button>
             </form>
         </div>
+    </div>
+
+    <!-- Modale Ajout Jante -->
+    <div id="modalRim" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="document.getElementById('modalRim').style.display='none'">&times;</span>
+        <h2>Ajouter une Jante</h2>
+        <form action="action.php" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="add_rim">
+            <div class="grid-2-col">
+                <div class="form-group">
+                    <label>Marque</label>
+                    <input type="text" name="brand" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Modèle</label>
+                    <input type="text" name="model" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Diamètre (ex: 17")</label>
+                    <input type="text" name="diameter" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Entraxe (ex: 4x100, 5x114.3)</label>
+                    <input type="text" name="bolt_pattern" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Type (Matériau)</label>
+                    <select name="type" class="form-control">
+                        <option value="Aluminium">Aluminium (Jante Alu)</option>
+                        <option value="Acier">Acier (Jante Tôle)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Prix (FCFA)</label>
+                    <input type="number" name="price" class="form-control" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description courte</label>
+                <textarea name="description" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Image de la jante</label>
+                <input type="file" name="image" class="form-control" accept="image/png, image/jpeg, image/webp">
+            </div>
+            <button type="submit" class="btn">Enregistrer la Jante</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modale Modification Jante -->
+    <div id="modalEditRim" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="document.getElementById('modalEditRim').style.display='none'">&times;</span>
+        <h2>Modifier la Jante</h2>
+        <form action="action.php" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="edit_rim">
+            <input type="hidden" name="id" id="edit_rim_id">
+            <input type="hidden" name="existing_image" id="edit_rim_existing_image">
+            <div class="grid-2-col">
+                <div class="form-group">
+                    <label>Marque</label>
+                    <input type="text" name="brand" id="edit_rim_brand" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Modèle</label>
+                    <input type="text" name="model" id="edit_rim_model" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Diamètre (ex: 17")</label>
+                    <input type="text" name="diameter" id="edit_rim_diameter" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Entraxe (ex: 4x100, 5x114.3)</label>
+                    <input type="text" name="bolt_pattern" id="edit_rim_bolt_pattern" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Type (Matériau)</label>
+                    <select name="type" id="edit_rim_type" class="form-control">
+                        <option value="Aluminium">Aluminium (Jante Alu)</option>
+                        <option value="Acier">Acier (Jante Tôle)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Prix (FCFA)</label>
+                    <input type="number" name="price" id="edit_rim_price" class="form-control" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description courte</label>
+                <textarea name="description" id="edit_rim_description" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Remplacer l'image (Laissez vide pour conserver l'image actuelle)</label>
+                <input type="file" name="image" class="form-control" accept="image/png, image/jpeg, image/webp">
+                <div id="edit_rim_image_preview" style="margin-top:10px;"></div>
+            </div>
+            <button type="submit" class="btn">Mettre à jour la Jante</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modale Ajout Accessoire -->
+    <div id="modalAccessory" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="document.getElementById('modalAccessory').style.display='none'">&times;</span>
+        <h2>Ajouter un Accessoire</h2>
+        <form action="action.php" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="add_accessory">
+            <div class="grid-2-col">
+                <div class="form-group">
+                    <label>Nom de l'accessoire (ex: Batterie 70Ah)</label>
+                    <input type="text" name="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Catégorie (ex: Batterie, Lubrifiant, Éclairage)</label>
+                    <input type="text" name="category" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Prix (FCFA)</label>
+                    <input type="number" name="price" class="form-control" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description courte</label>
+                <textarea name="description" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Image de l'accessoire</label>
+                <input type="file" name="image" class="form-control" accept="image/png, image/jpeg, image/webp">
+            </div>
+            <button type="submit" class="btn">Enregistrer l'Accessoire</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modale Modification Accessoire -->
+    <div id="modalEditAccessory" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="document.getElementById('modalEditAccessory').style.display='none'">&times;</span>
+        <h2>Modifier l'Accessoire</h2>
+        <form action="action.php" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="action" value="edit_accessory">
+            <input type="hidden" name="id" id="edit_acc_id">
+            <input type="hidden" name="existing_image" id="edit_acc_existing_image">
+            <div class="grid-2-col">
+                <div class="form-group">
+                    <label>Nom de l'accessoire</label>
+                    <input type="text" name="name" id="edit_acc_name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Catégorie</label>
+                    <input type="text" name="category" id="edit_acc_category" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Prix (FCFA)</label>
+                    <input type="number" name="price" id="edit_acc_price" class="form-control" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Description courte</label>
+                <textarea name="description" id="edit_acc_description" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Remplacer l'image (Laissez vide pour conserver l'image actuelle)</label>
+                <input type="file" name="image" class="form-control" accept="image/png, image/jpeg, image/webp">
+                <div id="edit_acc_image_preview" style="margin-top:10px;"></div>
+            </div>
+            <button type="submit" class="btn">Mettre à jour l'Accessoire</button>
+        </form>
+      </div>
     </div>
 
     <!-- Modale Ajout Option Devis -->
@@ -774,6 +1054,29 @@ try {
             document.getElementById('editTireDesc').value = desc;
             document.getElementById('editTireExistingImage').value = image;
             document.getElementById('modalEditTire').style.display = 'block';
+        }
+
+        function openEditRim(id, brand, model, diameter, bolt_pattern, type, price, desc, image) {
+            document.getElementById('edit_rim_id').value = id;
+            document.getElementById('edit_rim_brand').value = brand;
+            document.getElementById('edit_rim_model').value = model;
+            document.getElementById('edit_rim_diameter').value = diameter;
+            document.getElementById('edit_rim_bolt_pattern').value = bolt_pattern;
+            document.getElementById('edit_rim_type').value = type;
+            document.getElementById('edit_rim_price').value = price;
+            document.getElementById('edit_rim_description').value = desc;
+            document.getElementById('edit_rim_existing_image').value = image;
+            document.getElementById('modalEditRim').style.display = 'block';
+        }
+
+        function openEditAccessory(id, name, category, price, desc, image) {
+            document.getElementById('edit_acc_id').value = id;
+            document.getElementById('edit_acc_name').value = name;
+            document.getElementById('edit_acc_category').value = category;
+            document.getElementById('edit_acc_price').value = price;
+            document.getElementById('edit_acc_description').value = desc;
+            document.getElementById('edit_acc_existing_image').value = image;
+            document.getElementById('modalEditAccessory').style.display = 'block';
         }
     </script>
 
