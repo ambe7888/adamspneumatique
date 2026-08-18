@@ -375,8 +375,12 @@ function renderCatalogItems(items) {
         itemHeader.appendChild(badge);
         itemCard.appendChild(itemHeader);
 
+        const productLink = `produit.php?type=tire&id=${encodeURIComponent(tire.id)}`;
+
         if (tire.image) {
-            const tireImgWrapper = document.createElement('div');
+            const tireImgWrapper = document.createElement('a');
+            tireImgWrapper.href = productLink;
+            tireImgWrapper.style.display = 'block';
             tireImgWrapper.style.textAlign = 'center';
             tireImgWrapper.style.margin = '15px 0';
             const tireImg = document.createElement('img');
@@ -391,9 +395,19 @@ function renderCatalogItems(items) {
             itemCard.appendChild(tireImgWrapper);
         }
 
+        const titleLink = document.createElement('a');
+        titleLink.href = productLink;
+        titleLink.style.textDecoration = 'none';
+        titleLink.style.color = 'inherit';
+
         const title = document.createElement('h4');
         title.textContent = `${tire.width}/${tire.ratio} ${tire.rim} - ${tire.model}`;
-        itemCard.appendChild(title);
+        title.style.transition = 'color 0.3s ease';
+        title.addEventListener('mouseenter', () => title.style.color = 'var(--primary-gold)');
+        title.addEventListener('mouseleave', () => title.style.color = 'inherit');
+
+        titleLink.appendChild(title);
+        itemCard.appendChild(titleLink);
 
         const specs = document.createElement('div');
         specs.className = 'tire-specs';
@@ -512,8 +526,12 @@ function renderRims(rims) {
         itemHeader.appendChild(brandTag);
         itemCard.appendChild(itemHeader);
 
+        const productLink = `produit.php?type=rim&id=${encodeURIComponent(rim.id)}`;
+
         if (rim.image) {
-            const tireImgWrapper = document.createElement('div');
+            const tireImgWrapper = document.createElement('a');
+            tireImgWrapper.href = productLink;
+            tireImgWrapper.style.display = 'block';
             tireImgWrapper.style.textAlign = 'center';
             tireImgWrapper.style.margin = '15px 0';
             const tireImg = document.createElement('img');
@@ -528,9 +546,19 @@ function renderRims(rims) {
             itemCard.appendChild(tireImgWrapper);
         }
 
+        const titleLink = document.createElement('a');
+        titleLink.href = productLink;
+        titleLink.style.textDecoration = 'none';
+        titleLink.style.color = 'inherit';
+
         const title = document.createElement('h4');
         title.textContent = `${rim.model}`;
-        itemCard.appendChild(title);
+        title.style.transition = 'color 0.3s ease';
+        title.addEventListener('mouseenter', () => title.style.color = 'var(--primary-gold)');
+        title.addEventListener('mouseleave', () => title.style.color = 'inherit');
+
+        titleLink.appendChild(title);
+        itemCard.appendChild(titleLink);
 
         const specs = document.createElement('div');
         specs.className = 'tire-specs';
@@ -636,8 +664,12 @@ function renderAccessories(accessories) {
         itemHeader.appendChild(brandTag);
         itemCard.appendChild(itemHeader);
 
+        const productLink = `produit.php?type=accessory&id=${encodeURIComponent(acc.id)}`;
+
         if (acc.image) {
-            const tireImgWrapper = document.createElement('div');
+            const tireImgWrapper = document.createElement('a');
+            tireImgWrapper.href = productLink;
+            tireImgWrapper.style.display = 'block';
             tireImgWrapper.style.textAlign = 'center';
             tireImgWrapper.style.margin = '15px 0';
             const tireImg = document.createElement('img');
@@ -652,9 +684,19 @@ function renderAccessories(accessories) {
             itemCard.appendChild(tireImgWrapper);
         }
 
+        const titleLink = document.createElement('a');
+        titleLink.href = productLink;
+        titleLink.style.textDecoration = 'none';
+        titleLink.style.color = 'inherit';
+
         const title = document.createElement('h4');
         title.textContent = acc.name;
-        itemCard.appendChild(title);
+        title.style.transition = 'color 0.3s ease';
+        title.addEventListener('mouseenter', () => title.style.color = 'var(--primary-gold)');
+        title.addEventListener('mouseleave', () => title.style.color = 'inherit');
+
+        titleLink.appendChild(title);
+        itemCard.appendChild(titleLink);
 
         const desc = document.createElement('p');
         desc.style.fontSize = '0.85rem';

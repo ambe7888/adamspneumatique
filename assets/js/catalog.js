@@ -345,9 +345,13 @@ function renderProductsGrid(items) {
         header.appendChild(badge);
         card.appendChild(header);
 
+        const productLink = `produit.php?type=${encodeURIComponent(item._itemType)}&id=${encodeURIComponent(item.id)}`;
+
         // Image
         if (item.image) {
-            const imgWrapper = document.createElement('div');
+            const imgWrapper = document.createElement('a');
+            imgWrapper.href = productLink;
+            imgWrapper.style.display = 'block';
             imgWrapper.style.textAlign = 'center';
             imgWrapper.style.margin = '15px 0';
             const img = document.createElement('img');
@@ -363,9 +367,19 @@ function renderProductsGrid(items) {
         }
 
         // Title
+        const titleLink = document.createElement('a');
+        titleLink.href = productLink;
+        titleLink.style.textDecoration = 'none';
+        titleLink.style.color = 'inherit';
+        
         const title = document.createElement('h4');
         title.textContent = titleText;
-        card.appendChild(title);
+        title.style.transition = 'color 0.3s ease';
+        title.addEventListener('mouseenter', () => title.style.color = 'var(--primary-gold)');
+        title.addEventListener('mouseleave', () => title.style.color = 'inherit');
+        
+        titleLink.appendChild(title);
+        card.appendChild(titleLink);
 
         // Specs
         const specs = document.createElement('div');
