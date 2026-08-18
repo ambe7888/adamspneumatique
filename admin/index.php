@@ -183,7 +183,10 @@ try {
 
         <div class="section-header">
             <h2><i class="fa-solid fa-tire" style="color: var(--secondary)"></i> Gestion des Pneus</h2>
-            <button class="btn" onclick="document.getElementById('modalTire').style.display='block'"><i class="fa-solid fa-plus"></i> Nouveau Pneu</button>
+            <div>
+                <a href="action.php?action=export_tires" class="btn btn-secondary" style="margin-right: 10px;"><i class="fa-solid fa-file-export"></i> Exporter CSV</a>
+                <button class="btn" onclick="document.getElementById('modalTire').style.display='block'"><i class="fa-solid fa-plus"></i> Nouveau Pneu</button>
+            </div>
         </div>
         <div class="table-responsive">
         <table>
@@ -240,7 +243,10 @@ try {
         <!-- Gestion des Jantes -->
         <div class="section-header">
             <h2><i class="fa-solid fa-life-ring" style="color: var(--secondary)"></i> Gestion des Jantes</h2>
-            <button class="btn" onclick="document.getElementById('modalRim').style.display='block'"><i class="fa-solid fa-plus"></i> Nouvelle Jante</button>
+            <div>
+                <a href="action.php?action=export_rims" class="btn btn-secondary" style="margin-right: 10px;"><i class="fa-solid fa-file-export"></i> Exporter CSV</a>
+                <button class="btn" onclick="document.getElementById('modalRim').style.display='block'"><i class="fa-solid fa-plus"></i> Nouvelle Jante</button>
+            </div>
         </div>
         <div class="table-responsive">
         <table>
@@ -289,7 +295,10 @@ try {
         <!-- Gestion des Accessoires -->
         <div class="section-header">
             <h2><i class="fa-solid fa-car-battery" style="color: var(--secondary)"></i> Gestion des Accessoires</h2>
-            <button class="btn" onclick="document.getElementById('modalAccessory').style.display='block'"><i class="fa-solid fa-plus"></i> Nouvel Accessoire</button>
+            <div>
+                <a href="action.php?action=export_accessories" class="btn btn-secondary" style="margin-right: 10px;"><i class="fa-solid fa-file-export"></i> Exporter CSV</a>
+                <button class="btn" onclick="document.getElementById('modalAccessory').style.display='block'"><i class="fa-solid fa-plus"></i> Nouvel Accessoire</button>
+            </div>
         </div>
         <div class="table-responsive">
         <table>

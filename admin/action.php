@@ -6,6 +6,44 @@ if (!isset($_SESSION['admin_logged_in'])) {
     die("Accès refusé.");
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    $action = $_GET['action'] ?? '';
+    if (in_array($action, ['export_tires', 'export_rims', 'export_accessories'])) {
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename=' . $action . '_' . date('Y-m-d') . '.csv');
+        $output = fopen('php://output', 'w');
+        
+        // UTF-8 BOM for Excel
+        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+        
+        if ($action === 'export_tires') {
+            fputcsv($output, ['ID', 'Marque', 'Modele', 'Dimensions', 'Categorie', 'Prix', 'Lien Unique'], ';');
+            $stmt = $pdo->query("SELECT * FROM tires");
+            while ($row = $stmt->fetch()) {
+                $link = "https://adamspneumatique.ci/produit.php?type=tire&id=" . $row['id'];
+                $dim = $row['width'] . '/' . $row['ratio'] . ' ' . $row['rim'];
+                fputcsv($output, [$row['id'], $row['brand'], $row['model'], $dim, $row['category'], $row['price'], $link], ';');
+            }
+        } elseif ($action === 'export_rims') {
+            fputcsv($output, ['ID', 'Marque', 'Modele', 'Diametre', 'Prix', 'Lien Unique'], ';');
+            $stmt = $pdo->query("SELECT * FROM rims");
+            while ($row = $stmt->fetch()) {
+                $link = "https://adamspneumatique.ci/produit.php?type=rim&id=" . $row['id'];
+                fputcsv($output, [$row['id'], $row['brand'], $row['model'], $row['diameter'], $row['price'], $link], ';');
+            }
+        } elseif ($action === 'export_accessories') {
+            fputcsv($output, ['ID', 'Categorie', 'Nom', 'Prix', 'Lien Unique'], ';');
+            $stmt = $pdo->query("SELECT * FROM accessories");
+            while ($row = $stmt->fetch()) {
+                $link = "https://adamspneumatique.ci/produit.php?type=accessory&id=" . $row['id'];
+                fputcsv($output, [$row['id'], $row['category'], $row['name'], $row['price'], $link], ';');
+            }
+        }
+        fclose($output);
+        exit;
+    }
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 

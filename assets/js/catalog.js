@@ -385,18 +385,43 @@ function renderProductsGrid(items) {
             card.appendChild(desc);
         }
 
-        // Price & Order Button
+        // Price
         const priceRow = document.createElement('div');
         priceRow.className = 'tire-price';
+        priceRow.style.marginBottom = '15px';
 
         const priceVal = document.createElement('div');
         priceVal.className = 'price-val';
         priceVal.textContent = priceText;
+        
+        priceRow.appendChild(priceVal);
+        card.appendChild(priceRow);
+
+        // Action Buttons
+        const actionRow = document.createElement('div');
+        actionRow.style.display = 'flex';
+        actionRow.style.gap = '10px';
+
+        const detailsBtn = document.createElement('a');
+        detailsBtn.className = 'btn btn-secondary';
+        detailsBtn.style.padding = '8px 10px';
+        detailsBtn.style.fontSize = '0.82rem';
+        detailsBtn.style.flex = '1';
+        detailsBtn.style.textAlign = 'center';
+        detailsBtn.href = `produit.php?type=${encodeURIComponent(item._itemType)}&id=${encodeURIComponent(item.id)}`;
+        
+        const iconEye = document.createElement('i');
+        iconEye.className = 'fa-solid fa-eye';
+        iconEye.style.marginRight = '6px';
+        detailsBtn.appendChild(iconEye);
+        detailsBtn.appendChild(document.createTextNode('Détails'));
 
         const orderBtn = document.createElement('a');
         orderBtn.className = 'btn btn-primary';
-        orderBtn.style.padding = '8px 14px';
+        orderBtn.style.padding = '8px 10px';
         orderBtn.style.fontSize = '0.82rem';
+        orderBtn.style.flex = '1';
+        orderBtn.style.textAlign = 'center';
         orderBtn.href = `index.php?order=${encodeURIComponent(devisParam)}&price=${encodeURIComponent(item.price)}#devis`;
         
         const iconCalc = document.createElement('i');
@@ -405,9 +430,9 @@ function renderProductsGrid(items) {
         orderBtn.appendChild(iconCalc);
         orderBtn.appendChild(document.createTextNode('Commander'));
 
-        priceRow.appendChild(priceVal);
-        priceRow.appendChild(orderBtn);
-        card.appendChild(priceRow);
+        actionRow.appendChild(detailsBtn);
+        actionRow.appendChild(orderBtn);
+        card.appendChild(actionRow);
 
         grid.appendChild(card);
     });

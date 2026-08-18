@@ -454,10 +454,36 @@ function renderCatalogItems(items) {
             }
         });
 
-        priceRow.appendChild(priceVal);
-        priceRow.appendChild(orderBtn);
+        const actionRow = document.createElement('div');
+        actionRow.style.display = 'flex';
+        actionRow.style.gap = '10px';
+        actionRow.style.marginTop = '10px';
 
+        const detailsBtn = document.createElement('a');
+        detailsBtn.className = 'btn btn-secondary';
+        detailsBtn.style.padding = '8px 10px';
+        detailsBtn.style.fontSize = '0.8rem';
+        detailsBtn.style.flex = '1';
+        detailsBtn.style.textAlign = 'center';
+        detailsBtn.href = `produit.php?type=tire&id=${tire.id}`;
+        
+        const iconEye = document.createElement('i');
+        iconEye.className = 'fa-solid fa-eye';
+        iconEye.style.marginRight = '4px';
+        detailsBtn.appendChild(iconEye);
+        detailsBtn.appendChild(document.createTextNode('Détails'));
+
+        orderBtn.style.flex = '1';
+        orderBtn.style.textAlign = 'center';
+        orderBtn.style.padding = '8px 10px';
+
+        actionRow.appendChild(detailsBtn);
+        actionRow.appendChild(orderBtn);
+
+        priceRow.style.marginBottom = '10px';
+        priceRow.appendChild(priceVal);
         itemCard.appendChild(priceRow);
+        itemCard.appendChild(actionRow);
 
         gridContainer.appendChild(itemCard);
     });
@@ -553,9 +579,36 @@ function renderRims(rims) {
             }
         });
 
+        const actionRow = document.createElement('div');
+        actionRow.style.display = 'flex';
+        actionRow.style.gap = '10px';
+        actionRow.style.marginTop = '10px';
+
+        const detailsBtn = document.createElement('a');
+        detailsBtn.className = 'btn btn-secondary';
+        detailsBtn.style.padding = '8px 10px';
+        detailsBtn.style.fontSize = '0.8rem';
+        detailsBtn.style.flex = '1';
+        detailsBtn.style.textAlign = 'center';
+        detailsBtn.href = `produit.php?type=rim&id=${rim.id}`;
+        
+        const iconEye = document.createElement('i');
+        iconEye.className = 'fa-solid fa-eye';
+        iconEye.style.marginRight = '4px';
+        detailsBtn.appendChild(iconEye);
+        detailsBtn.appendChild(document.createTextNode('Détails'));
+
+        orderBtn.style.flex = '1';
+        orderBtn.style.textAlign = 'center';
+        orderBtn.style.padding = '8px 10px';
+
+        actionRow.appendChild(detailsBtn);
+        actionRow.appendChild(orderBtn);
+
+        priceRow.style.marginBottom = '10px';
         priceRow.appendChild(priceVal);
-        priceRow.appendChild(orderBtn);
         itemCard.appendChild(priceRow);
+        itemCard.appendChild(actionRow);
         gridContainer.appendChild(itemCard);
     });
 }
@@ -643,9 +696,36 @@ function renderAccessories(accessories) {
             }
         });
 
+        const actionRow = document.createElement('div');
+        actionRow.style.display = 'flex';
+        actionRow.style.gap = '10px';
+        actionRow.style.marginTop = '10px';
+
+        const detailsBtn = document.createElement('a');
+        detailsBtn.className = 'btn btn-secondary';
+        detailsBtn.style.padding = '8px 10px';
+        detailsBtn.style.fontSize = '0.8rem';
+        detailsBtn.style.flex = '1';
+        detailsBtn.style.textAlign = 'center';
+        detailsBtn.href = `produit.php?type=accessory&id=${acc.id}`;
+        
+        const iconEye = document.createElement('i');
+        iconEye.className = 'fa-solid fa-eye';
+        iconEye.style.marginRight = '4px';
+        detailsBtn.appendChild(iconEye);
+        detailsBtn.appendChild(document.createTextNode('Détails'));
+
+        orderBtn.style.flex = '1';
+        orderBtn.style.textAlign = 'center';
+        orderBtn.style.padding = '8px 10px';
+
+        actionRow.appendChild(detailsBtn);
+        actionRow.appendChild(orderBtn);
+
+        priceRow.style.marginBottom = '10px';
         priceRow.appendChild(priceVal);
-        priceRow.appendChild(orderBtn);
         itemCard.appendChild(priceRow);
+        itemCard.appendChild(actionRow);
         gridContainer.appendChild(itemCard);
     });
 }
