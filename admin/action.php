@@ -17,26 +17,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
         fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
         
         if ($action === 'export_tires') {
-            fputcsv($output, ['ID', 'Marque', 'Modele', 'Dimensions', 'Categorie', 'Prix', 'Lien Unique'], ';');
+            fputcsv($output, ['name', 'description', 'price', 'image_url', 'direct_link'], ',');
             $stmt = $pdo->query("SELECT * FROM tires");
             while ($row = $stmt->fetch()) {
                 $link = "https://adamspneumatique.ci/produit.php?type=tire&id=" . $row['id'];
                 $dim = $row['width'] . '/' . $row['ratio'] . ' ' . $row['rim'];
-                fputcsv($output, [$row['id'], $row['brand'], $row['model'], $dim, $row['category'], $row['price'], $link], ';');
+                $name = $row['brand'] . ' ' . $row['model'] . ' ' . $dim;
+                $imageUrl = !empty($row['image']) ? "https://adamspneumatique.ci/" . ltrim($row['image'], '/') : "";
+                fputcsv($output, [$name, $row['description'], $row['price'], $imageUrl, $link], ',');
             }
         } elseif ($action === 'export_rims') {
-            fputcsv($output, ['ID', 'Marque', 'Modele', 'Diametre', 'Prix', 'Lien Unique'], ';');
+            fputcsv($output, ['name', 'description', 'price', 'image_url', 'direct_link'], ',');
             $stmt = $pdo->query("SELECT * FROM rims");
             while ($row = $stmt->fetch()) {
                 $link = "https://adamspneumatique.ci/produit.php?type=rim&id=" . $row['id'];
-                fputcsv($output, [$row['id'], $row['brand'], $row['model'], $row['diameter'], $row['price'], $link], ';');
+                $name = "Jante " . $row['brand'] . ' ' . $row['model'] . ' ' . $row['diameter'];
+                $imageUrl = !empty($row['image']) ? "https://adamspneumatique.ci/" . ltrim($row['image'], '/') : "";
+                fputcsv($output, [$name, $row['description'], $row['price'], $imageUrl, $link], ',');
             }
         } elseif ($action === 'export_accessories') {
-            fputcsv($output, ['ID', 'Categorie', 'Nom', 'Prix', 'Lien Unique'], ';');
+            fputcsv($output, ['name', 'description', 'price', 'image_url', 'direct_link'], ',');
             $stmt = $pdo->query("SELECT * FROM accessories");
             while ($row = $stmt->fetch()) {
                 $link = "https://adamspneumatique.ci/produit.php?type=accessory&id=" . $row['id'];
-                fputcsv($output, [$row['id'], $row['category'], $row['name'], $row['price'], $link], ';');
+                $name = $row['name'];
+                $imageUrl = !empty($row['image']) ? "https://adamspneumatique.ci/" . ltrim($row['image'], '/') : "";
+                fputcsv($output, [$name, $row['description'], $row['price'], $imageUrl, $link], ',');
             }
         }
         fclose($output);
