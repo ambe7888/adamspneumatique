@@ -291,12 +291,43 @@ if (!$product) {
                         </ul>
                         
                         <div class="product-actions">
-                            <a href="index.php?order=<?= urlencode($devisParam) ?>&price=<?= urlencode($product['price'] ?? 0) ?>#devis" class="btn btn-primary" style="flex: 1; text-align: center; font-size: 1.1rem; padding: 12px;">
+                            <a href="#quick-order" class="btn btn-primary" style="flex: 1; text-align: center; font-size: 1.1rem; padding: 12px;">
                                 <i class="fa-solid fa-cart-shopping"></i> Commander
                             </a>
-                            <a href="https://wa.me/?text=<?= urlencode('Bonjour, je suis intéressé par ce produit : ' . $titleText . ' (' . $priceText . '). Lien: https://adamspneumatique.ci/produit.php?type=' . $type . '&id=' . $id) ?>" target="_blank" class="btn btn-secondary" style="flex: 1; text-align: center; font-size: 1.1rem; padding: 12px; background: #25D366; border-color: #25D366; color: white;">
+                            <a href="https://wa.me/2250709105592?text=<?= urlencode('Bonjour, je suis intéressé par ce produit : ' . $titleText . ' (' . $priceText . '). Lien: https://adamspneumatique.ci/produit.php?type=' . $type . '&id=' . $id) ?>" target="_blank" class="btn btn-secondary" style="flex: 1; text-align: center; font-size: 1.1rem; padding: 12px; background: #25D366; border-color: #25D366; color: white;">
                                 <i class="fa-brands fa-whatsapp"></i> Poser une question
                             </a>
+                        </div>
+
+                        <div id="quick-order" style="margin-top: 35px; background: rgba(0,0,0,0.2); padding: 25px; border-radius: var(--radius-md); border: 1px solid rgba(255,255,255,0.05);">
+                            <h3 style="color: #fff; margin-bottom: 20px; font-size: 1.2rem;"><i class="fa-solid fa-bolt text-gold"></i> Commande Rapide</h3>
+                            <form id="quick-order-form">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 5px; display: block;">Nom & Prénom</label>
+                                        <input type="text" class="form-control" id="qo-name" placeholder="Votre nom complet" required style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1);">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 5px; display: block;">Téléphone</label>
+                                        <input type="tel" class="form-control" id="qo-phone" placeholder="Votre numéro" required style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1);">
+                                    </div>
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 5px; display: block;">Quantité</label>
+                                        <input type="number" class="form-control" id="qo-qty" min="1" max="20" value="1" required style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1);">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 5px; display: block;">Total Estimatif</label>
+                                        <div class="form-control" id="qo-total" style="background: rgba(0,0,0,0.3); color: var(--primary-gold); font-weight: bold; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center;">
+                                            <?= htmlspecialchars($priceText) ?>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" id="qo-submit-wa" class="btn btn-whatsapp" style="width: 100%; font-size: 1.05rem; padding: 12px; display: flex; justify-content: center; align-items: center; gap: 10px;">
+                                    <i class="fa-brands fa-whatsapp" style="font-size: 1.2rem;"></i> Envoyer ma commande
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -373,5 +404,71 @@ if (!$product) {
 
     <!-- Scripts -->
     <script src="assets/js/main.js?v=<?= htmlspecialchars($cacheVer) ?>"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Logique Formulaire Rapide
+        const qtyInput = document.getElementById('qo-qty');
+        const totalDisplay = document.getElementById('qo-total');
+        const unitPrice = <?= json_encode((int)($product['price'] ?? 0)) ?>;
+        
+        if(qtyInput && totalDisplay) {
+            qtyInput.addEventListener('input', function() {
+                let qty = parseInt(this.value);
+                if (isNaN(qty) || qty < 1) qty = 1;
+                const total = qty * unitPrice;
+                totalDisplay.textContent = total.toLocaleString('fr-FR') + ' FCFA';
+            });
+        }
+
+        const submitWa = document.getElementById('qo-submit-wa');
+        if(submitWa) {
+            submitWa.addEventListener('click', function() {
+                const name = document.getElementById('qo-name').value.trim();
+                const phone = document.getElementById('qo-phone').value.trim();
+                const qty = document.getElementById('qo-qty').value;
+                
+                if(!name || !phone) {
+                    alert("Veuillez entrer votre nom et votre numéro de téléphone avant de continuer.");
+                    document.getElementById('qo-name').focus();
+                    return;
+                }
+
+                const productName = <?= json_encode($titleText) ?>;
+                const productType = <?= json_encode($badgeText) ?>;
+                const link = window.location.href;
+                
+                let message = "Bonjour Adams Pneumatique, je souhaite passer une commande.\n\n";
+                message += "📦 *Détails du Produit :*\n";
+                message += "- Désignation : " + productName + " (" + productType + ")\n";
+                message += "- Quantité : " + qty + "\n";
+                message += "- Lien : " + link + "\n\n";
+                message += "👤 *Mes Coordonnées :*\n";
+                message += "- Nom : " + name + "\n";
+                message += "- Tél : " + phone + "\n";
+                
+                // Fetch the fallback wa number or the dynamic one
+                const waNumber = (window.SITE_SETTINGS && window.SITE_SETTINGS['phone']) 
+                    ? window.SITE_SETTINGS['phone'].replace(/\s/g, '').replace('+', '') 
+                    : '2250709105592';
+                
+                const waUrl = "https://api.whatsapp.com/send?phone=" + waNumber + "&text=" + encodeURIComponent(message);
+                window.open(waUrl, "_blank");
+            });
+        }
+        
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    });
+    </script>
 </body>
 </html>
